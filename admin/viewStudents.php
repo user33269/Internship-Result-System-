@@ -36,6 +36,7 @@ $result = $conn->query($sql);
                     <td>{$row['student_name']}</td>
                     <td>{$row['programme']}</td>
                     <td>
+                        <a href='editStudent.php?id={$row['student_id']}'>Edit</a>|
                         <a href= 'deleteStudent.php?id={$row['student_id']}'
                         onclick=\"return confirm('Are you sure you want to delete this student?')\">
                     Delete</a>
