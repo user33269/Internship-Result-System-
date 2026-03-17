@@ -25,6 +25,7 @@ $result = $conn->query($sql);
         <th>Student ID</th>
         <th>Name</th>
         <th>Programme</th>
+        <th>Action </th>
     </tr>
 
     <?php
@@ -34,6 +35,11 @@ $result = $conn->query($sql);
                     <td>{$row['student_id']}</td>
                     <td>{$row['student_name']}</td>
                     <td>{$row['programme']}</td>
+                    <td>
+                        <a href= 'deleteStudent.php?id={$row['student_id']}'
+                        onclick=\"return confirm('Are you sure you want to delete this student?')\">
+                    Delete</a>
+                    </td>
                   </tr>";
         }
     } else {
