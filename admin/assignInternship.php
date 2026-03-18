@@ -17,9 +17,21 @@ $assessors = $conn->query("SELECT * FROM users WHERE role='assessor'");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $student = $_POST['student_id'];
-    $assessor = $_POST['assessor_id'];
+    $assessor = $_POST['assessor_name'] ?? "";
     $company = $_POST['company_name'];
 
+    // convert assessor username to user_id
+    $getAssessor = $conn->query("
+        SELECT user_id FROM users 
+        WHERE username = '$assessor' 
+        AND role = 'assessor'
+    ");
+
+    if ($getAssessor->num_rows > 0) {
+        $assessor = $getAssessor->fetch_assoc()['user_id'];
+    } else {
+        die("Invalid assessor selected");
+    }
     $sql = "INSERT INTO internships (student_id, assessor_id, company_name)
             VALUES ('$student', '$assessor', '$company')";
 
@@ -34,6 +46,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const inputs = document.querySelectorAll("input");
+
+    inputs.forEach((input, index) => {
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault(); // STOP form submission
+                
+                let next = inputs[index + 1];
+                if (next) {
+                    next.focus(); // move to next field
+                }
+            }
+        });
+    });
+});
+</script>
 <body>
 
 <h2>Assign Internship</h2>
@@ -41,25 +71,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <form method="POST">
 
 Student:
-<select name="student_id">
+<input list="students" name="student_id" placeholder="Select or type student ID">
+<datalist id="students">
 <?php while($s = $students->fetch_assoc()) { ?>
     <option value="<?php echo $s['student_id']; ?>">
         <?php echo $s['student_name']; ?>
     </option>
 <?php } ?>
-</select><br><br>
+</datalist>
+<br><br>
 
 Assessor:
-<select name="assessor_id">
+<input list="assessors" name="assessor_name"
+       value="<?php echo $assessor ?? ''; ?>"
+       placeholder="Select assessor">
+
+<datalist id="assessors">
 <?php while($a = $assessors->fetch_assoc()) { ?>
-    <option value="<?php echo $a['user_id']; ?>">
-        <?php echo $a['username']; ?>
-    </option>
+    <option value="<?php echo $a['username']; ?>">
 <?php } ?>
-</select><br><br>
+</datalist>
+<br><br>
 
 Company:
-<input type="text" name="company_name"><br><br>
+<input type="text" name="company_name" placeholder="Enter company name"><br><br>
 
 <button type="submit">Assign</button>
 
