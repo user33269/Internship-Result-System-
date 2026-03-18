@@ -9,7 +9,7 @@ if ($_SESSION['role'] != 'admin') {
 // fetch students
 $students = $conn->query("SELECT * FROM students");
 
-// fetch assessors only
+// fetch assessors
 $assessors = $conn->query("SELECT * FROM users WHERE role='assessor'");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -22,7 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             VALUES ('$student', '$assessor', '$company')";
 
     if ($conn->query($sql)) {
-        echo "Assignment successful!";
+        header("Location: viewInternships.php");
+        exit();
     } else {
         echo "Error: " . $conn->error;
     }
@@ -30,8 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <!DOCTYPE html>
-<html?=>
-    <body>
+<html>
+<body>
+
 <h2>Assign Internship</h2>
 
 <form method="POST">
@@ -48,7 +50,7 @@ Student:
 Assessor:
 <select name="assessor_id">
 <?php while($a = $assessors->fetch_assoc()) { ?>
-    <option value="<?php echo $a['internship_id']; ?>">
+    <option value="<?php echo $a['user_id']; ?>">
         <?php echo $a['username']; ?>
     </option>
 <?php } ?>
@@ -59,4 +61,7 @@ Company:
 
 <button type="submit">Assign</button>
 
-</form></body></html> 
+</form>
+
+</body>
+</html>
