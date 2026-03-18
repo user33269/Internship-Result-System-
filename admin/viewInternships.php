@@ -4,7 +4,7 @@ include("../config/db.php");
 $sql = "SELECT students.student_name, users.username, internships.company_name
         FROM internships
         JOIN students ON internships.student_id = students.student_id
-        JOIN users ON internships.assessor_id = users.intership_id";
+        JOIN users ON internships.assessor_id = users.user_id";
 
 $result = $conn->query($sql);
 ?>
