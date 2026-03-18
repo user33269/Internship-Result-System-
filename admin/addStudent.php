@@ -1,7 +1,7 @@
 <?php
 session_start();
 include("../config/db.php");
-
+include("../includes/navbar.php");
 
 if ($_SESSION['role'] != 'admin') {
     die("Access denied");

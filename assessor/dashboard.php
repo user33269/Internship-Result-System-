@@ -1,5 +1,6 @@
 <?php
 session_start();
+include("../includes/navbar.php");
 
 if ($_SESSION['role'] != 'assessor') {
     die("Access denied");

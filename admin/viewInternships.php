@@ -1,6 +1,6 @@
 <?php
 include("../config/db.php");
-
+include("../includes/navbar.php");
 $sql = "SELECT students.student_name, users.username, internships.company_name
         FROM internships
         JOIN students ON internships.student_id = students.student_id
