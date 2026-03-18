@@ -10,10 +10,13 @@ if ($_SESSION['role'] != 'assessor') {
 
 $assessor_id = $_SESSION['user_id'];
 
-$search = "";
-if (isset($_GET['search'])) {
-    $search = $_GET['search'];
-}
+
+$search = $_GET['search'] ?? "";
+$programme = $_GET['programme'] ?? "";
+
+
+$programmes = $conn->query("SELECT DISTINCT programme FROM students");
+
 
 $sql = "SELECT students.student_id, students.student_name,
                assessments.final_mark
@@ -23,15 +26,35 @@ $sql = "SELECT students.student_id, students.student_name,
         WHERE internships.assessor_id = '$assessor_id'
         AND (students.student_id LIKE '%$search%'
         OR students.student_name LIKE '%$search%')";
+
+
+if (!empty($programme)) {
+    $sql .= " AND students.programme = '$programme'";
+}
+
 $result = $conn->query($sql);
 ?>
 
 <h2>My Students Results</h2>
 
 <form method="GET">
-    <input type="text" name="search" placeholder="Search by ID or Name">
-    <button type="submit">Search</button>
+    <input type="text" name="search" placeholder="Search by ID or Name"
+           value="<?php echo $search; ?>">
+
+    <select name="programme">
+        <option value="">All Programmes</option>
+
+        <?php while($p = $programmes->fetch_assoc()) { ?>
+            <option value="<?php echo $p['programme']; ?>"
+                <?php if ($programme == $p['programme']) echo "selected"; ?>>
+                <?php echo $p['programme']; ?>
+            </option>
+        <?php } ?>
+    </select>
+
+    <button type="submit">Filter</button>
 </form>
+
 <table border="1">
 <tr>
     <th>ID</th>
