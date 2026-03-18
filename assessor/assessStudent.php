@@ -50,7 +50,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <h2>Assess Student</h2>
+<style>
 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+</style>
 <form method="POST">
 
 Undertaking Tasks (10%):
@@ -83,3 +94,21 @@ Comment:
 <button type="submit">Submit Assessment</button>
 
 </form>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const inputs = document.querySelectorAll("input, textarea");
+
+    inputs.forEach((input, index) => {
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault(); // stop submit
+
+                let next = inputs[index + 1];
+                if (next) {
+                    next.focus();
+                }
+            }
+        });
+    });
+});
+</script>
