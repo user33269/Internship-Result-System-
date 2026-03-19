@@ -36,7 +36,6 @@ $result = $conn->query($sql);
 ?>
 
 <h2>My Students Results</h2>
-
 <form method="GET">
     <input type="text" name="search" placeholder="Search by ID or Name"
            value="<?php echo $search; ?>">
@@ -53,6 +52,11 @@ $result = $conn->query($sql);
     </select>
 
     <button type="submit">Filter</button>
+</form>
+<form method="GET" action="exportResults.php">
+    <input type="hidden" name="search" value="<?php echo $search; ?>">
+    <input type="hidden" name="programme" value="<?php echo $programme; ?>">
+    <button type="submit">⬇ Export to Excel</button>
 </form>
 
 <table border="1">
