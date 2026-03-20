@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 include("config/db.php");
 
@@ -21,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($user['role'] == "admin") {
                 header("Location: admin/dashboard.php");
-            }else if ($row['role'] == 'assessor') {
+            }else if ($user['role'] == 'assessor') {
                 header("Location: assessor/dashboard.php");
             } 
             else {
