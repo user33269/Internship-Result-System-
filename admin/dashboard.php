@@ -12,11 +12,6 @@ $total_students  = $conn->query("SELECT COUNT(*) AS c FROM students")->fetch_ass
 $total_assessors = $conn->query("SELECT COUNT(*) AS c FROM users WHERE role='assessor'")->fetch_assoc()['c'];
 $total_assessed  = $conn->query("SELECT COUNT(*) AS c FROM assessments")->fetch_assoc()['c'];
 $pending         = $total_students - $total_assessed;
-
-$stats = $conn->query("SELECT AVG(final_mark) AS avg, MAX(final_mark) AS hi, MIN(final_mark) AS lo FROM assessments")->fetch_assoc();
-$avg_mark = $stats['avg'] !== null ? number_format($stats['avg'], 2) : 'N/A';
-$hi_mark  = $stats['hi']  !== null ? number_format($stats['hi'],  2) : 'N/A';
-$lo_mark  = $stats['lo']  !== null ? number_format($stats['lo'],  2) : 'N/A';
 ?>
 <!DOCTYPE html>
 <html>
