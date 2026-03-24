@@ -8,22 +8,36 @@ if ($_SESSION['role'] != 'assessor') {
     die("Access denied");
 }
 
-$student_id = $_GET['id'];
+$student_id = $_GET['id']??'';
+if (!$student_id) {
+    die("Invalid student ID");
+}
+
+$message = "";
 
 // handle form submit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $u = $_POST['undertaking_tasks'];
-    $h = $_POST['health_requirements'];
-    $t = $_POST['theoretical_knowledge'];
-    $r = $_POST['report_presentation'];
-    $l = $_POST['language_clarity'];
-    $la = $_POST['learning_activities'];
-    $p = $_POST['project_management'];
-    $tm = $_POST['time_management'];
+    $u = (int)$_POST['undertaking_tasks'];
+    $h = (int)$_POST['health_requirements'];
+    $t = (int)$_POST['theoretical_knowledge'];
+    $r = (int)$_POST['report_presentation'];
+    $l = (int)$_POST['language_clarity'];
+    $la = (int)$_POST['learning_activities'];
+    $p = (int)$_POST['project_management'];
+    $tm = (int)$_POST['time_management'];
     $comment = $_POST['comment'];
 
-    // 🔥 AUTO CALCULATION
+    $marks = [$u,$h,$t,$r,$l,$la,$p,$tm];
+    foreach ($marks as $m) {
+        if ($m < 0 || $m > 100) {
+            $message = "Error: All marks must be between 0 and 100.";
+            break;
+        }
+    }
+
+    if(!$message) {
+    // Auto calculation
     $final =
         ($u * 0.10) +
         ($h * 0.10) +
@@ -45,6 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Assessment submitted!";
     } else {
         echo "Error: " . $conn->error;
+        }
     }
 }
 ?>
