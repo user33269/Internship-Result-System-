@@ -6,34 +6,46 @@ include("config/db.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
-    $sql = "SELECT * FROM users WHERE username='$username'";
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare ("SELECT * FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
 
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
+    if ($row) {
+        $valid = false; // Initialize login status
 
-        // simple password check (temporary)
-        if ($password == $user['password']) {
+        if (password_verify($password, $row['password'])) {
+            $valid = true;
 
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['role'] = $user['role'];
+        } elseif ($password === $row['password']) {
+            $hashed = password_hash($password, PASSWORD_DEFAULT); // Hash password
+            $upd = $conn->prepare("UPDATE users SET password=? WHERE user_id=?");
+            $upd->bind_param("si", $hashed, $row['user_id']);
+            $upd->execute();
+            $upd->close();
+            $valid = true;
+        }
 
-            if ($user['role'] == "admin") {
+        if ($valid) {
+            $_SESSION['user_id'] = $row['user_id'];
+            $_SESSION['role']    = $row['role'];
+            $_SESSION['username'] = $row['username'];
+
+            if ($row['role'] == "admin") {
                 header("Location: admin/dashboard.php");
-            }else if ($user['role'] == 'assessor') {
+            }else {
                 header("Location: assessor/dashboard.php");
             } 
-            else {
-                header("Location: assessor/dashboard.php");
-            }
+            exit();
         } else {
-            echo "Wrong password";
+            $error = "Wrong password";
         }
     } else {
-        echo "User not found";
+        $error = "User not found";
     }
 }
 ?>
@@ -44,6 +56,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </head>
     <body>
         <h2> Login </h2>
+        <?php if (!empty($error)): ?>
+        <p class="error"><?= htmlspecialchars($error) ?></p>
+    <?php endif; ?>
         <form method ="POST">
             Username: <input type="text" name ="username" required><br><br>
             Password: <input type= "password" name= "password" required><br><br> 
