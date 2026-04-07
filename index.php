@@ -2,54 +2,23 @@
 <html>
 <head>
     <title>Internship Management System</title>
-
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            margin-top: 100px;
-            background-color: #f5f5f5;
-        }
-
-        h1 {
-            color: #333;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        }
-
-        .container {
-            background: white;
-            padding: 40px;
-            margin: auto;
-            width: 40%;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px #ccc;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body>
+<body style="display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0;">
 
-<div class="container">
-    <h1> Internship Management System</h1>
+<div style="border: 2px solid #ccc; border-radius:10px; padding:40px; text-align:center; width:40%; background:white; box-shadow: 0px 0px 10px #ccc;">
 
-    <p>Welcome! Please login to continue.</p>
+    <img src="image/logo.png" alt="Logo" style="width:240px; margin-bottom:15px;">
+
+    <h1 style="font-size:32px;">Internship Management System</h1>
+
+   
 
     <a href="login.php">
-        <button class="btn">Login</button>
-    </a>
+    <button class="btn" style="background-color:#4CAF50; font-size:20px; padding:5px 20px;">Login</button>
+</a>
+
 </div>
 
 </body>
