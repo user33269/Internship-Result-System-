@@ -53,18 +53,111 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html> 
     <head> 
         <title> Login </title>
-    </head>
-    <body>
-        <h2> Login </h2>
-        <?php if (!empty($error)): ?>
-        <p class="error"><?= htmlspecialchars($error) ?></p>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        .login-card {
+            background: white;
+            border: 1px solid #dbdbdb;
+            border-radius: 12px;
+            padding: 55px 50px;
+            width: 450px;
+            text-align: center;
+        }
+
+        .login-card img {
+            width: 130px;
+            margin-bottom: 25px;
+        }
+
+        .login-card h2 {
+            font-size: 22px;
+            color: #555;
+            margin-bottom: 25px;
+            font-weight: normal;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 14px 15px;
+            margin-bottom: 15px;
+            border: 1px solid #dbdbdb;
+            border-radius: 6px;
+            background-color: #fafafa;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .login-card input:focus {
+            outline: none;
+            border-color: #a8a8a8;
+            background-color: white;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .login-btn:hover {
+            background-color: #1877f2;
+        }
+
+        .error-msg {
+            color: #ed4956;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+
+        .contact-link {
+            display: block;
+            margin-top: 18px;
+            font-size: 15px;
+            color: #0095f6;
+            text-decoration: none;
+        }
+
+        .contact-link:hover {
+            text-decoration: underline;
+            color: #1877f2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <img src="image/logo.png" alt="Logo">
+    <h2>Sign in to your account</h2>
+
+    <?php if (!empty($error)): ?>
+        <p class="error-msg"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
-        <form method ="POST">
-            Username: <input type="text" name ="username" required><br><br>
-            Password: <input type= "password" name= "password" required><br><br> 
 
-            <button type ="submit"> Login </button> 
+    <form method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit" class="login-btn">Log In</button>
+    </form>
+    <a href="https://mail.google.com/mail/?view=cm&to=admin@outlook.com.my" class="contact-link" target="_blank">Contact Admin</a>
+</div>
 
-        </form> 
     </body>
 </html>
