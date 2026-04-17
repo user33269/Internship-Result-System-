@@ -22,8 +22,8 @@ if ($role == 'admin') {
 
     .navbar {
         background-color: white;
-        border-bottom: 1px solid #dbdbdb;
-        padding: 12px 30px;
+        border-bottom: 2px solid #dbdbdb;
+        padding: 30px 40px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -32,36 +32,56 @@ if ($role == 'admin') {
         z-index: 100;
     }
 
+    .navbar-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
     .navbar-left img {
-        width: 60px;
-        cursor: pointer;
+        width: 110px;
     }
 
-    .navbar-center a {
-        text-decoration: none;
-        color: #333;
-        font-size: 15px;
+    .navbar-left .dashboard-link {
+        font-size: 32px;
         font-weight: bold;
-        padding: 8px 18px;
-        border-radius: 6px;
-        transition: background 0.2s;
+        color: #0095f6;
+        text-decoration: underline;
+        letter-spacing: 1px;
     }
 
-    .navbar-center a:hover { background-color: #f0f2f5; }
+    .navbar-left .dashboard-link:hover {
+        color: #1877f2;
+    }
 
     .navbar-right {
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 28px;
+        margin-left: auto;
     }
 
-    .navbar-right a {
+    .navbar-right .help-link {
         text-decoration: none;
-        color: #333;
-        font-size: 15px;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 8px 16px;
+        background-color: #0095f6;
+        border: 2px solid #0095f6;
+        border-radius: 8px;
+        transition: all 0.2s;
     }
 
-    .navbar-right a:hover { color: #0095f6; }
+    .navbar-right .help-link:hover { 
+        background-color: #1877f2;
+        border-color: #1877f2;    
+        color: white;
+    }
 
     .profile-wrapper { position: relative; }
 
@@ -70,14 +90,15 @@ if ($role == 'admin') {
         color: white;
         border: none;
         border-radius: 50%;
-        width: 38px;
-        height: 38px;
-        font-size: 16px;
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
         font-weight: bold;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
+        box-shadow: 0 2px 6px rgba(0,149,246,0.4);
     }
 
     .profile-btn:hover { background: #1877f2; }
@@ -86,13 +107,13 @@ if ($role == 'admin') {
         display: none;
         position: absolute;
         right: 0;
-        top: 48px;
+        top: 58px;
         background: white;
         border: 1px solid #dbdbdb;
-        border-radius: 10px;
-        padding: 16px 20px;
-        width: 200px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        padding: 20px 24px;
+        width: 220px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
         text-align: center;
         z-index: 200;
     }
@@ -103,18 +124,19 @@ if ($role == 'admin') {
         background: #0095f6;
         color: white;
         border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
+        width: 60px;
+        height: 60px;
+        font-size: 26px;
         font-weight: bold;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 10px;
+        box-shadow: 0 2px 6px rgba(0,149,246,0.4);
     }
 
     .dropdown p {
-        font-size: 15px;
+        font-size: 16px;
         font-weight: bold;
         color: #333;
         margin-bottom: 4px;
@@ -126,7 +148,7 @@ if ($role == 'admin') {
     }
 
     .dropdown hr {
-        margin: 12px 0;
+        margin: 14px 0;
         border: none;
         border-top: 1px solid #eee;
     }
@@ -134,35 +156,32 @@ if ($role == 'admin') {
     .logout-btn {
         display: block;
         width: 100%;
-        padding: 9px;
+        padding: 11px;
         background-color: #ed4956;
         color: white;
         border: none;
-        border-radius: 6px;
-        font-size: 14px;
+        border-radius: 8px;
+        font-size: 15px;
         font-weight: bold;
         cursor: pointer;
         text-decoration: none;
         text-align: center;
+        transition: background 0.2s;
     }
 
     .logout-btn:hover { background-color: #c0392b; }
 </style>
 
-<!-- NAVBAR -->
 <div class="navbar">
     <div class="navbar-left">
         <a href="<?= $dashboard ?>">
             <img src="../image/logo.png" alt="Logo">
         </a>
-    </div>
-
-    <div class="navbar-center">
-        <a href="<?= $dashboard ?>">Dashboard</a>
+        <a href="<?= $dashboard ?>" class="dashboard-link">Dashboard</a>
     </div>
 
     <div class="navbar-right">
-        <a href="mailto:admin@outlook.com.my">Help</a>
+        <a href="mailto:admin@outlook.com.my" class="help-link">Help</a>
 
         <div class="profile-wrapper">
             <button class="profile-btn" onclick="toggleDropdown()">
