@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         style="display:inline-block; margin-bottom:20px; padding:9px 18px; background:white; border:1px solid #dbdbdb; border-radius:8px; color:#333; font-size:14px; font-weight:bold; text-decoration:none;"
         onmouseover="this.style.borderColor='#0095f6'; this.style.color='#0095f6';"
         onmouseout="this.style.borderColor='#dbdbdb'; this.style.color='#333';">
-        Back to Dashboard
+        ← Back to Dashboard
     </a>
 
     <div style="background:white; border:1px solid #dbdbdb; border-radius:12px; padding:35px 40px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
