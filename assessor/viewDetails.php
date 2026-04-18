@@ -91,6 +91,9 @@ if ($mark >= 80) {
                         <th
                             style="padding:12px 18px; text-align:left; color:#888; font-size:13px; border-bottom:1px solid #eee;">
                             Marks</th>
+                        <th
+                            style="padding:12px 18px; text-align:center; color:#888; font-size:13px; border-bottom:1px solid #eee;">
+                            Converted Rate</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -101,6 +104,10 @@ if ($mark >= 80) {
                             style="padding:12px 18px; font-size:14px; font-weight:bold; color:#0095f6; text-align:center;">
                             <?= $row['undertaking_tasks'] ?>
                         </td>
+                        <td
+                            style="padding:12px 18px; font-size:14px; font-weight:bold; color:#27ae60; text-align:center;">
+                            <?= number_format($row['undertaking_tasks'] * 0.10, 2) ?>
+                        </td>
                     </tr>
                     <tr style="background:#f9f9f9; border-bottom:1px solid #eee;">
                         <td style="padding:12px 18px; font-size:14px; color:#333;">Health Requirements</td>
@@ -108,6 +115,10 @@ if ($mark >= 80) {
                         <td
                             style="padding:12px 18px; font-size:14px; font-weight:bold; color:#0095f6; text-align:center;">
                             <?= $row['health_requirements'] ?>
+                        </td>
+                        <td
+                            style="padding:12px 18px; font-size:14px; font-weight:bold; color:#27ae60; text-align:center;">
+                            <?= number_format($row['health_requirements'] * 0.10, 2) ?>
                         </td>
                     </tr>
                     <tr style="border-bottom:1px solid #eee;">
@@ -117,6 +128,10 @@ if ($mark >= 80) {
                             style="padding:12px 18px; font-size:14px; font-weight:bold; color:#0095f6; text-align:center;">
                             <?= $row['theoretical_knowledge'] ?>
                         </td>
+                        <td
+                            style="padding:12px 18px; font-size:14px; font-weight:bold; color:#27ae60; text-align:center;">
+                            <?= number_format($row['theoretical_knowledge'] * 0.10, 2) ?>
+                        </td>
                     </tr>
                     <tr style="background:#f9f9f9; border-bottom:1px solid #eee;">
                         <td style="padding:12px 18px; font-size:14px; color:#333;">Report Presentation</td>
@@ -124,6 +139,11 @@ if ($mark >= 80) {
                         <td
                             style="padding:12px 18px; font-size:14px; font-weight:bold; color:#0095f6; text-align:center;">
                             <?= $row['report_presentation'] ?>
+                        </td>
+
+                        <td
+                            style="padding:12px 18px; font-size:14px; font-weight:bold; color:#27ae60; text-align:center;">
+                            <?= number_format($row['report_presentation'] * 0.15, 2) ?>
                         </td>
                     </tr>
                     <tr style="border-bottom:1px solid #eee;">
@@ -133,6 +153,10 @@ if ($mark >= 80) {
                             style="padding:12px 18px; font-size:14px; font-weight:bold; color:#0095f6; text-align:center;">
                             <?= $row['language_clarity'] ?>
                         </td>
+                        <td
+                            style="padding:12px 18px; font-size:14px; font-weight:bold; color:#27ae60; text-align:center;">
+                            <?= number_format($row['language_clarity'] * 0.10, 2) ?>
+                        </td>
                     </tr>
                     <tr style="background:#f9f9f9; border-bottom:1px solid #eee;">
                         <td style="padding:12px 18px; font-size:14px; color:#333;">Learning Activities</td>
@@ -140,6 +164,10 @@ if ($mark >= 80) {
                         <td
                             style="padding:12px 18px; font-size:14px; font-weight:bold; color:#0095f6; text-align:center;">
                             <?= $row['learning_activities'] ?>
+                        </td>
+                        <td
+                            style="padding:12px 18px; font-size:14px; font-weight:bold; color:#27ae60; text-align:center;">
+                            <?= number_format($row['learning_activities'] * 0.15, 2) ?>
                         </td>
                     </tr>
                     <tr style="border-bottom:1px solid #eee;">
@@ -149,6 +177,10 @@ if ($mark >= 80) {
                             style="padding:12px 18px; font-size:14px; font-weight:bold; color:#0095f6; text-align:center;">
                             <?= $row['project_management'] ?>
                         </td>
+                        <td
+                            style="padding:12px 18px; font-size:14px; font-weight:bold; color:#27ae60; text-align:center;">
+                            <?= number_format($row['project_management'] * 0.15, 2) ?>
+                        </td>
                     </tr>
                     <tr style="background:#f9f9f9; border-bottom:1px solid #eee;">
                         <td style="padding:12px 18px; font-size:14px; color:#333;">Time Management</td>
@@ -156,6 +188,10 @@ if ($mark >= 80) {
                         <td
                             style="padding:12px 18px; font-size:14px; font-weight:bold; color:#0095f6; text-align:center;">
                             <?= $row['time_management'] ?>
+                        </td>
+                        <td
+                            style="padding:12px 18px; font-size:14px; font-weight:bold; color:#27ae60; text-align:center;">
+                            <?= number_format($row['time_management'] * 0.15, 2) ?>
                         </td>
                     </tr>
 
@@ -165,6 +201,10 @@ if ($mark >= 80) {
                         <td
                             style="padding:14px 18px; font-size:18px; font-weight:bold; color:<?= $markColor ?>; text-align:center;">
                             <?= $row['final_mark'] ?>
+                        </td>
+                        <td
+                            style="padding:14px 18px; font-size:18px; font-weight:bold; color:<?= $markColor ?>; text-align:center;">
+                            <?= number_format($row['final_mark'], 2) ?>
                         </td>
                     </tr>
                 </tbody>
