@@ -83,13 +83,13 @@ if ($mark >= 80) {
                 <thead>
                     <tr style="background-color:#f9f9f9;">
                         <th
-                            style="padding:12px 18px; text-align:left; color:#555; font-size:13px; border-bottom:1px solid #eee;">
+                            style="padding:12px 18px; text-align:left; color:#888; font-size:13px; border-bottom:1px solid #eee;">
                             Criteria</th>
                         <th
-                            style="padding:12px 18px; text-align:left; color:#555; font-size:13px; border-bottom:1px solid #eee;">
+                            style="padding:12px 18px; text-align:left; color:#888; font-size:13px; border-bottom:1px solid #eee;">
                             Weight</th>
                         <th
-                            style="padding:12px 18px; text-align:left; color:#555; font-size:13px; border-bottom:1px solid #eee;">
+                            style="padding:12px 18px; text-align:left; color:#888; font-size:13px; border-bottom:1px solid #eee;">
                             Marks</th>
                     </tr>
                 </thead>
