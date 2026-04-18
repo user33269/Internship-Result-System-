@@ -198,11 +198,7 @@ if ($mark >= 80) {
                     <tr style="background:#f0f7ff;">
                         <td style="padding:14px 18px; font-size:15px; font-weight:bold; color:#333;">Final Mark</td>
                         <td style="padding:14px 18px; font-size:13px; color:#888;">100%</td>
-                        <td
-                            style="padding:14px 18px; font-size:18px; font-weight:bold; color:<?= $markColor ?>; text-align:center;">
-                            <?= $row['final_mark'] ?>
-                        </td>
-                        <td
+                        <td colspan="2"
                             style="padding:14px 18px; font-size:18px; font-weight:bold; color:<?= $markColor ?>; text-align:center;">
                             <?= number_format($row['final_mark'], 2) ?>
                         </td>
