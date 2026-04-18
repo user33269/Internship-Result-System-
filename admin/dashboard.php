@@ -52,42 +52,36 @@ $pending         = $total_students - $total_assessed;
 
     <div style="font-size:18px; font-weight:bold; color:#333; margin-bottom:16px;">Quick Links</div>
 
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:30px;">
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-bottom:30px;">
 
-        <a href="addStudent.php" style="background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
+        <a href="addStudent.php" style="flex: 0 1 calc(33.33% - 14px); min-width: 200px; background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
             onmouseover="this.style.background='#0095f6'; this.style.color='white';"
             onmouseout="this.style.background='white'; this.style.color='#333';">
             <span style="font-size:28px; display:block; margin-bottom:10px;">🎓</span>Add Student
         </a>
 
-        <a href="viewStudents.php" style="background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
+        <a href="viewStudents.php" style="flex: 0 1 calc(33.33% - 14px); min-width: 200px; background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
             onmouseover="this.style.background='#0095f6'; this.style.color='white';"
             onmouseout="this.style.background='white'; this.style.color='#333';">
             <span style="font-size:28px; display:block; margin-bottom:10px;">👥</span>View Students
         </a>
 
-        <a href="assignInternship.php" style="background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
+        <a href="assignInternship.php" style="flex: 0 1 calc(33.33% - 14px); min-width: 200px; background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
             onmouseover="this.style.background='#0095f6'; this.style.color='white';"
             onmouseout="this.style.background='white'; this.style.color='#333';">
             <span style="font-size:28px; display:block; margin-bottom:10px;">📋</span>Assign Internship
         </a>
 
-        <a href="viewInternships.php" style="background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
+        <a href="viewInternships.php" style="flex: 0 1 calc(33.33% - 14px); min-width: 200px; background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
             onmouseover="this.style.background='#0095f6'; this.style.color='white';"
             onmouseout="this.style.background='white'; this.style.color='#333';">
             <span style="font-size:28px; display:block; margin-bottom:10px;">🏢</span>View Internships
         </a>
 
-        <a href="viewResults.php" style="background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
+        <a href="viewResults.php" style="flex: 0 1 calc(33.33% - 14px); min-width: 200px; background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
             onmouseover="this.style.background='#0095f6'; this.style.color='white';"
             onmouseout="this.style.background='white'; this.style.color='#333';">
             <span style="font-size:28px; display:block; margin-bottom:10px;">📊</span>View Results
-        </a>
-
-        <a href="manageAssessors.php" style="background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
-            onmouseover="this.style.background='#0095f6'; this.style.color='white';"
-            onmouseout="this.style.background='white'; this.style.color='#333';">
-            <span style="font-size:28px; display:block; margin-bottom:10px;">👤</span>Manage Assessors
         </a>
 
     </div>
