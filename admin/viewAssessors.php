@@ -35,7 +35,7 @@ $result = $conn->query("SELECT user_id, username, role FROM users WHERE role = '
                 ← Back to Dashboard
             </a>
 
-            <a href="addAssessor.php"
+            <a href="addAssessors.php"
                 style="display:inline-block; padding:9px 18px; background:#0095f6; border:1px solid #0095f6; border-radius:8px; color:white; font-size:14px; font-weight:bold; text-decoration:none;"
                 onmouseover="this.style.backgroundColor='#1877f2'; this.style.borderColor='#1877f2';"
                 onmouseout="this.style.backgroundColor='#0095f6'; this.style.borderColor='#0095f6';">
