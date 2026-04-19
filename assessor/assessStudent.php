@@ -17,23 +17,51 @@ $message = "";
 // handle form submit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $u = (int) $_POST['undertaking_tasks'];
-    $h = (int) $_POST['health_requirements'];
-    $t = (int) $_POST['theoretical_knowledge'];
-    $r = (int) $_POST['report_presentation'];
-    $l = (int) $_POST['language_clarity'];
-    $la = (int) $_POST['learning_activities'];
-    $p = (int) $_POST['project_management'];
-    $tm = (int) $_POST['time_management'];
-    $comment = $_POST['comment'];
+    $fields = [
+        'undertaking_tasks',
+        'health_requirements',
+        'theoretical_knowledge',
+        'report_presentation',
+        'language_clarity',
+        'learning_activities',
+        'project_management',
+        'time_management'
+    ];
 
-    $marks = [$u, $h, $t, $r, $l, $la, $p, $tm];
-    foreach ($marks as $m) {
-        if ($m < 0 || $m > 100) {
+    $marks = [];
+
+    foreach ($fields as $field) {
+
+        // check if exists + numeric
+        if (!isset($_POST[$field]) || !is_numeric($_POST[$field])) {
+            $message = "Error: All marks must be numeric.";
+            break;
+        }
+
+        $value = (int) $_POST[$field];
+
+        // range validation
+        if ($value < 0 || $value > 100) {
             $message = "Error: All marks must be between 0 and 100.";
             break;
         }
+
+        $marks[] = $value;
     }
+
+    // only proceed if no error so far
+    if (!isset($message)) {
+
+        $u  = $marks[0];
+        $h  = $marks[1];
+        $t  = $marks[2];
+        $r  = $marks[3];
+        $l  = $marks[4];
+        $la = $marks[5];
+        $p  = $marks[6];
+        $tm = $marks[7];
+        $comment = $_POST['comment'];}
+
 
     if (!$message) {
         // Auto calculation
