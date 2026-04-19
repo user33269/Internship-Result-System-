@@ -28,33 +28,6 @@ $pending = $total_students - $total_assessed;
 
         <h1 style="font-size:26px; color:#333; margin-bottom:30px; text-align:center;">Admin Dashboard</h1>
 
-        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:35px;">
-
-            <div
-                style="background:white; border:1px solid #dbdbdb; border-radius:10px; padding:24px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.05);">
-                <div style="font-size:36px; font-weight:bold; color:#0095f6;"><?= $total_students ?></div>
-                <div style="font-size:13px; color:#888; margin-top:6px;">Total Students</div>
-            </div>
-
-            <div
-                style="background:white; border:1px solid #dbdbdb; border-radius:10px; padding:24px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.05);">
-                <div style="font-size:36px; font-weight:bold; color:#0095f6;"><?= $total_assessors ?></div>
-                <div style="font-size:13px; color:#888; margin-top:6px;">Total Assessors</div>
-            </div>
-
-            <div
-                style="background:white; border:1px solid #dbdbdb; border-radius:10px; padding:24px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.05);">
-                <div style="font-size:36px; font-weight:bold; color:#0095f6;"><?= $total_assessed ?></div>
-                <div style="font-size:13px; color:#888; margin-top:6px;">Assessed</div>
-            </div>
-
-            <div
-                style="background:white; border:1px solid #dbdbdb; border-radius:10px; padding:24px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.05);">
-                <div style="font-size:36px; font-weight:bold; color:#0095f6;"><?= $pending ?></div>
-                <div style="font-size:13px; color:#888; margin-top:6px;">Pending Assessment</div>
-            </div>
-
-        </div>
 
         <div style="font-size:18px; font-weight:bold; color:#333; margin-bottom:16px;">Quick Links</div>
 
