@@ -14,13 +14,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['student_name'];
     $programme = $_POST['programme'];
 
-    $sql = "INSERT INTO students (student_id, student_name, programme)
-            VALUES ('$id', '$name', '$programme')";
+    // Check if student ID already exists
+    $checkSql = "SELECT * FROM students WHERE student_id = '$id'";
+    $result = $conn->query($checkSql);
 
-    if ($conn->query($sql) === TRUE) {
-        echo "Student added successfully!";
+    if ($result->num_rows > 0) {
+        echo "<script>alert('Student ID already exists!');</script>";
     } else {
-        echo "Error: " . $conn->error;
+        $sql = "INSERT INTO students (student_id, student_name, programme)
+                VALUES ('$id', '$name', '$programme')";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "<script>alert('Student added successfully!');</script>";
+        } else {
+            echo "Error: " . $conn->error;
+        }
     }
 }
 ?>

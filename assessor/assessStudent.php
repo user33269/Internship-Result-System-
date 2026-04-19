@@ -8,11 +8,30 @@ if ($_SESSION['role'] != 'assessor') {
 }
 
 $student_id = $_GET['id'] ?? '';
+$assessor_id = $_SESSION['user_id'];
+
 if (!$student_id) {
     die("Invalid student ID");
 }
 
 $message = "";
+
+// 🔥 GET internship_id (VERY IMPORTANT FIX)
+$getInternship = $conn->query("
+    SELECT internship_id 
+    FROM internships 
+    WHERE student_id = '$student_id' 
+    AND assessor_id = '$assessor_id'
+    ORDER BY internship_id DESC
+    LIMIT 1
+");
+
+if ($getInternship && $getInternship->num_rows > 0) {
+    $internship_id = $getInternship->fetch_assoc()['internship_id'];
+} else {
+    die("No internship found for this student.");
+}
+
 
 // handle form submit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -29,28 +48,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ];
 
     $marks = [];
+    $error = false;
 
     foreach ($fields as $field) {
 
-        // check if exists + numeric
         if (!isset($_POST[$field]) || !is_numeric($_POST[$field])) {
             $message = "Error: All marks must be numeric.";
+            $error = true;
             break;
         }
 
         $value = (int) $_POST[$field];
 
-        // range validation
         if ($value < 0 || $value > 100) {
-            $message = "Error: All marks must be between 0 and 100.";
+            $message = "Error: Marks must be between 0 and 100.";
+            $error = true;
             break;
         }
 
         $marks[] = $value;
     }
 
-    // only proceed if no error so far
-    if (!isset($message)) {
+    if (!$error) {
 
         $u  = $marks[0];
         $h  = $marks[1];
@@ -60,11 +79,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $la = $marks[5];
         $p  = $marks[6];
         $tm = $marks[7];
-        $comment = $_POST['comment'];}
+        $comment = $_POST['comment'] ?? "";
 
-
-    if (!$message) {
-        // Auto calculation
+        // calculate final
         $final =
             ($u * 0.10) +
             ($h * 0.10) +
@@ -75,17 +92,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ($p * 0.15) +
             ($tm * 0.15);
 
+        
         $sql = "INSERT INTO assessments
-            (student_id, undertaking_tasks, health_requirements, theoretical_knowledge,
+            (student_id, internship_id, undertaking_tasks, health_requirements, theoretical_knowledge,
              report_presentation, language_clarity, learning_activities,
              project_management, time_management, comment, final_mark)
             VALUES
-            ('$student_id','$u','$h','$t','$r','$l','$la','$p','$tm','$comment','$final')";
+            ('$student_id','$internship_id','$u','$h','$t','$r','$l','$la','$p','$tm','$comment','$final')";
 
         if ($conn->query($sql)) {
-            echo "Assessment submitted!";
+            $message = "success";
         } else {
-            echo "Error: " . $conn->error;
+            $message = "Database Error: " . $conn->error;
         }
     }
 }

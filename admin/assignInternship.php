@@ -18,6 +18,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $student = $_POST['student_id'];
     $assessor = $_POST['assessor_name'] ?? "";
     $company = $_POST['company_name'];
+    $companyName = trim($_POST['company_name']);
+
+    // 1. Try to find existing company
+    $getCompany = $conn->query("
+        SELECT company_id 
+        FROM companies 
+        WHERE LOWER(company_name) = LOWER('$companyName')
+    ");
+
+    // 2. If exists → use it
+    if ($getCompany->num_rows > 0) {
+        $company_id = $getCompany->fetch_assoc()['company_id'];
+    } 
+    // 3. If not exists → create it
+    else {
+        $conn->query("
+            INSERT INTO companies (company_name) 
+            VALUES ('$companyName')
+        ");
+
+        $company_id = $conn->insert_id;
+    }
+    $year = $_POST['year'];
+    $semester = $_POST['semester'];
 
     // convert assessor username to user_id
     $getAssessor = $conn->query("
@@ -31,9 +55,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         die("Invalid assessor selected");
     }
-    $sql = "INSERT INTO internships (student_id, assessor_id, company_name)
-            VALUES ('$student', '$assessor', '$company')";
-
+    $sql = "INSERT INTO internships 
+        (student_id, assessor_id, company_id, semester, year)
+        VALUES 
+        ('$student', '$assessor', '$company_id', '$semester', '$year')";
     if ($conn->query($sql)) {
         header("Location: viewInternships.php");
         exit();
@@ -91,9 +116,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input list="assessors" name="assessor_name" placeholder="Select assessor"
                         style="width:100%; padding:11px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
                     <datalist id="assessors">
-                            <?php while ($a = $assessors->fetch_assoc()) { ?>
-                            <option value="<?php echo $a['username']; ?>">
-                                    <?php } ?>
+                        <?php while ($a = $assessors->fetch_assoc()) { ?>
+                        <option value="<?php echo $a['username']; ?>">
+        <?php } ?>
                     </datalist>
                 </div>
 
@@ -102,6 +127,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         style="display:block; font-size:14px; font-weight:bold; color:#333; margin-bottom:6px;">Company</label>
                     <input type="text" name="company_name" placeholder="Enter company name"
                         style="width:100%; padding:11px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
+                </div>
+
+                <div style="margin-bottom:18px;">
+                    <label style="display:block; font-size:14px; font-weight:bold; color:#333; margin-bottom:6px;">
+                        Semester
+                    </label>
+
+                    <select name="semester"
+                        style="width:100%; padding:11px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;"
+                        required>
+
+                        <option value="" disabled selected>Select semester</option>
+                        <option value="Spring">Spring</option>
+                        <option value="Summer">Summer</option>
+                        <option value="Autumn">Autumn</option>
+                        <option value="Winter">Winter</option>
+
+                    </select>
+                </div>
+
+                <div style="margin-bottom:18px;">
+                    <label style="display:block; font-size:14px; font-weight:bold; color:#333; margin-bottom:6px;">
+                        Year
+                    </label>
+
+                    <input type="number" name="year" placeholder="e.g. 2026"
+                        min="2000" max="2100"
+                        style="width:100%; padding:11px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;"
+                        required>
                 </div>
 
                 <button type="submit"
