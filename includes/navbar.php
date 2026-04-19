@@ -1,11 +1,17 @@
 <?php
+session_start();
+
 $role = $_SESSION['role'];
 $username = $_SESSION['username'];
 
+$currentPage = basename($_SERVER['PHP_SELF']);
+
 if ($role == 'admin') {
     $dashboard = "../admin/dashboard.php";
+    $home = "../admin/home.php";
 } else if ($role == 'assessor') {
     $dashboard = "../assessor/dashboard.php";
+    $home = "../assessor/home.php";
 }
 ?>
 
@@ -25,6 +31,7 @@ if ($role == 'admin') {
         padding: 0 40px;
         height: 70px;
         display: flex;
+        flex-wrap: nowrap;
         align-items: center;
         justify-content: space-between;
     }
@@ -33,59 +40,32 @@ if ($role == 'admin') {
         display: flex;
         align-items: center;
         gap: 18px;
+        flex-shrink: 0;
+        white-space: nowrap;
     }
 
     .navbar-left img {
         width: 60px;
+        margin-right: 30px;
     }
 
-    .dashboard-link {
+    .nav-link {
         position: relative;
         font-size: 14px;
-        font-weight: 600px; /* slightly stronger */
-        color: #111827;   /* darker, more visible */
-        padding: 26px 0;
-        transition: color 0.2s;
-    }
-
-    .dashboard-link:hover {
-        color: #707a89; /* subtle hover instead of drastic change */
-    }
-
-    /* ACTIVE underline (like your screenshot) */
-    .dashboard-link::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        height: 3px;
-        background-color: #7c3aed; /* purple line */
-        border-radius: 2px;
-    }
-    /* RIGHT SECTION */
-    .navbar-right {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .help-link {
-        position: relative;
-        font-size: 16px;
-        font-weight: 500;
-        color: #374151;
-        text-decoration: none;
-        padding: 26px 0;
-        transition: color 0.2s;
-    }
-
-    .help-link:hover {
+        font-weight: 600;
         color: #111827;
+        padding: 26px 0;
+        text-decoration: none;
+        margin-right: 18px;
+        transition: color 0.2s;
     }
 
-    /* Optional: underline when active (same as Dashboard) */
-    .help-link.active::after {
+    .nav-link:hover {
+        color: #707a89;
+    }
+
+    /* Only active link gets the purple underline */
+    .nav-link.active::after {
         content: "";
         position: absolute;
         left: 0;
@@ -95,6 +75,30 @@ if ($role == 'admin') {
         background-color: #7c3aed;
         border-radius: 2px;
     }
+    /* RIGHT SECTION */
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-shrink: 0; 
+        white-space: nowrap;
+    }
+
+    .help-link {
+        position: relative;
+        font-size: 14px;
+        font-weight: 600;
+        color: #111827;
+        padding: 26px 0;
+        text-decoration: none;
+        margin-right: 18px;
+        transition: color 0.2s;
+    }
+
+    .help-link:hover {
+        color: #707a89;
+    }
+
     .profile-wrapper {
         position: relative;
     }
@@ -191,7 +195,14 @@ if ($role == 'admin') {
         <a href="<?= $dashboard ?>">
             <img src="../image/logo.png" alt="Logo">
         </a>
-        <a href="<?= $dashboard ?>" class="dashboard-link">Dashboard</a>
+
+        <a href="<?= $home ?>" class="nav-link <?= ($currentPage == 'home.php') ? 'active' : '' ?>">
+            Home
+        </a>
+
+        <a href="<?= $dashboard ?>" class="nav-link <?= ($currentPage == 'dashboard.php') ? 'active' : '' ?>">
+            Dashboard
+        </a>
     </div>
 
     <!-- RIGHT -->
