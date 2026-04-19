@@ -22,7 +22,7 @@ $pending = $total_students - $total_assessed;
 
 <body>
 
-        <?php include("../includes/navbar.php"); ?>
+    <?php include("../includes/navbar.php"); ?>
 
     <div style="max-width:900px; margin:40px auto; padding:0 20px;">
 
@@ -66,6 +66,13 @@ $pending = $total_students - $total_assessed;
                 onmouseover="this.style.background='#0095f6'; this.style.color='white';"
                 onmouseout="this.style.background='white'; this.style.color='#333';">
                 <span style="font-size:28px; display:block; margin-bottom:10px;">📊</span>View Results
+            </a>
+
+            <a href="viewAssessors.php"
+                style="flex: 0 1 calc(33.33% - 14px); min-width: 200px; background:white; border:1px solid #dbdbdb; border-radius:10px; padding:20px; text-align:center; text-decoration:none; color:#333; font-size:15px; font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.2s;"
+                onmouseover="this.style.background='#0095f6'; this.style.color='white';"
+                onmouseout="this.style.background='white'; this.style.color='#333';">
+                <span style="font-size:28px; display:block; margin-bottom:10px;">👤</span>View Assessors
             </a>
 
         </div>
