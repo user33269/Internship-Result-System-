@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .left img {
-            width: 200px;
+            width: 180px;
             margin-bottom: 25px;
         }
 
@@ -97,10 +97,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .left p {
-            font-size: 15px;
-            line-height: 1.6;
+            font-size: 14px;
+            line-height: 1.3;
             color: #4a647a;
             max-width: 320px;
+            margin-top:10px;
         }
 
         /* RIGHT SIDE */

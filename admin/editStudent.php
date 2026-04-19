@@ -68,14 +68,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <form method="POST">
 
-                <input type="hidden" name="student_id" value=" <?php echo $row['student_id']; ?>
+    <input type="hidden" name="student_id" value="<?php echo $row['student_id']; ?>">
 
-        <div style=" margin-bottom:18px;">
-                <label style="display:block; font-size:14px; font-weight:bold; color:#333; margin-bottom:6px;">Student
-                    Name</label>
-                <input type="text" name="student_name" value="<?php echo $row['student_name']; ?>"
-                    style="width:100%; padding:11px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
-        </div>
+    <div style="margin-bottom:18px;">
+        <label style="display:block; font-size:14px; font-weight:bold; color:#333; margin-bottom:6px;">
+            Student Name
+        </label>
+
+        <input type="text" name="student_name" value="<?php echo $row['student_name']; ?>"
+            style="width:100%; padding:11px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
+    </div>
+
+
+                    
 
         <div style="margin-bottom:24px;">
             <label
@@ -94,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     </div>
+
 
 </body>
 
