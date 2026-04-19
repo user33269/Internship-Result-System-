@@ -103,6 +103,29 @@ $pending = $total_students - $total_assessed;
     </div>
 
 </div>
+<a href="../assessor/dashboard.php"
+   style="position:fixed;
+          bottom:35px;
+          right:170px;
+          background:linear-gradient(135deg, #0095f6, #6a5cff);
+          color:white;
+          padding:12px 18px;
+          border-radius:30px;
+          text-decoration:none;
+          font-size:14px;
+          font-weight:600;
+          box-shadow:0 6px 18px rgba(0,0,0,0.2);
+          transition:0.2s ease;
+          display:flex;
+          align-items:center;
+          gap:6px;"
+
+   onmouseover="this.style.transform='translateY(-2px)'"
+   onmouseout="this.style.transform='translateY(0)'">
+
+    Get Started <span style="font-size:16px;">→</span>
+</a>
+
 
 </body>
 </html>
