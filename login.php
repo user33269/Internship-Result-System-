@@ -51,113 +51,201 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html> 
 <html> 
-    <head> 
-        <title> Login </title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<head> 
+    <title>Login</title>
+
     <style>
         body {
-            background-color: #fafafa;
+            margin: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            font-family: 'Roboto', Arial, sans-serif;
+            background: #f5f7fb;
         }
 
-        .login-card {
+        .main {
+            width: 900px;
+            height: 520px;
+            display: flex;
+            border-radius: 18px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #d9ecff 0%, #f7fbff 50%, #ffffff 100%);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        }
+
+        /* LEFT SIDE */
+        .left {
+            flex: 1;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .left img {
+            width: 200px;  
+            margin-bottom: 25px;
+        }
+
+        .left h1 {
+            font-size: 26px;
+            margin: 0 0 15px 0;
+            color: #1f3b57;
+        }
+
+        .left p {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #4a647a;
+            max-width: 320px;
+        }
+
+        /* RIGHT SIDE */
+        .right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-right: 45px;
+        }
+
+        /* LOGIN BOX */
+        .login-box {
+            width: 320px;
             background: white;
-            border: 1px solid #dbdbdb;
-            border-radius: 12px;
-            padding: 55px 50px;
-            width: 450px;
-            text-align: center;
+            padding: 35px;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            overflow: visible;
+        }
+        .login-box label {
+            font-size: 12px;
+            color: #353333;
+            margin-bottom: 6px;
+            display: block;
         }
 
-        .login-card img {
-            width: 130px;
-            margin-bottom: 25px;
+        .login-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
         }
 
-        .login-card h2 {
-            font-size: 22px;
-            color: #555;
-            margin-bottom: 25px;
-            font-weight: normal;
+        .login-box h2 {
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            color: #2c3e50;
         }
 
-        .login-card input {
+        .login-box input {
             width: 100%;
-            padding: 14px 15px;
-            margin-bottom: 15px;
-            border: 1px solid #dbdbdb;
-            border-radius: 6px;
-            background-color: #fafafa;
-            font-size: 16px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            background: #fafafa;
+            font-size: 14px;
             box-sizing: border-box;
         }
 
-        .login-card input:focus {
+        .login-box input:focus {
             outline: none;
-            border-color: #a8a8a8;
-            background-color: white;
+            border-color: #7fb3ff;
+            background: #fff;
         }
 
         .login-btn {
-            width: 100%;
-            padding: 14px;
-            background-color: #0095f6;
-            color: white;
-            border: none;
+            width: auto;
+            padding: 10px 18px;
+            font-size: 13px;
             border-radius: 6px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
+            margin-top: 0;
         }
 
         .login-btn:hover {
-            background-color: #1877f2;
+            background: #bcd4ef;
         }
 
         .error-msg {
-            color: #ed4956;
-            font-size: 15px;
-            margin-bottom: 12px;
+            background: #fff5f5;
+            border: 1px solid #ffd6d6;
+            border-left: 4px solid #e74c3c;
+            color: #c0392b;
+            font-size: 13px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .contact-link {
-            display: block;
-            margin-top: 18px;
-            font-size: 15px;
-            color: #0095f6;
-            text-decoration: none;
+            margin-top: 0;
+            font-size: 12px;
+            text-align: left;
         }
 
         .contact-link:hover {
             text-decoration: underline;
-            color: #1877f2;
         }
+
     </style>
 </head>
+
 <body>
 
-<div class="login-card">
-    <img src="image/logo.png" alt="Logo">
-    <h2>Sign in to your account</h2>
+<div class="main">
 
-    <?php if (!empty($error)): ?>
-        <p class="error-msg"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+    <!-- LEFT PANEL -->
+    <div class="left">
+        <img src="image/logo.png" alt="Logo">
 
-    <form method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit" class="login-btn">Log In</button>
-    </form>
-    <a href="https://mail.google.com/mail/?view=cm&to=admin@outlook.com.my" class="contact-link" target="_blank">Contact Admin</a>
+        <h1>Internship Management System</h1>
+
+        <p>
+            A centralized platform to manage internship applications, assessor evaluations,
+            and student progress tracking in a clean and efficient workflow.
+        </p>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right">
+        <div class="login-box">
+
+        <h2>Login</h2>
+
+        <?php if (!empty($error)): ?>
+            <div class="error-msg"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
+
+        <form method="POST">
+
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Enter username" required>
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter password" required>
+
+            <!-- bottom row actions -->
+            <div class="login-actions">
+                <a href="https://mail.google.com/mail/?view=cm&to=admin@outlook.com.my"
+                class="contact-link" target="_blank">
+                Contact Admin
+                </a>
+
+                <button type="submit" class="login-btn">Log In</button>
+            </div>
+
+        </form>
+
+    </div>
+    </div>
+
 </div>
 
-    </body>
+</body>
 </html>
