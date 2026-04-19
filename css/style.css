@@ -20,16 +20,6 @@ body {
     align-items: center;
 }
 
-.navbar a {
-    color: #ecf0f1;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.navbar a:hover {
-    text-decoration: underline;
-}
-
 /* Page Wrapper */
 .container {
     max-width: 960px;
