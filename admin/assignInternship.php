@@ -17,33 +17,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $student = $_POST['student_id'];
     $assessor = $_POST['assessor_name'] ?? "";
-    $company = $_POST['company_name'];
     $companyName = trim($_POST['company_name']);
-
-    // 1. Try to find existing company
-    $getCompany = $conn->query("
-        SELECT company_id 
-        FROM companies 
-        WHERE LOWER(company_name) = LOWER('$companyName')
-    ");
-
-    // 2. If exists → use it
-    if ($getCompany->num_rows > 0) {
-        $company_id = $getCompany->fetch_assoc()['company_id'];
-    } 
-    // 3. If not exists → create it
-    else {
-        $conn->query("
-            INSERT INTO companies (company_name) 
-            VALUES ('$companyName')
-        ");
-
-        $company_id = $conn->insert_id;
-    }
     $year = $_POST['year'];
     $semester = $_POST['semester'];
 
-    // convert assessor username to user_id
+    //validate students
+    $checkStudent = $conn->query("
+        SELECT student_id FROM students 
+        WHERE student_id = '$student'
+    ");
+
+    if ($checkStudent->num_rows == 0) {
+        die("❌ Invalid student selected. Student does not exist.");
+    }
+
+    //validate assessor
     $getAssessor = $conn->query("
         SELECT user_id FROM users 
         WHERE username = '$assessor' 
@@ -53,12 +41,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($getAssessor->num_rows > 0) {
         $assessor = $getAssessor->fetch_assoc()['user_id'];
     } else {
-        die("Invalid assessor selected");
+        die("❌ Invalid assessor selected");
     }
+
+    //handle company
+    $getCompany = $conn->query("
+        SELECT company_id 
+        FROM companies 
+        WHERE LOWER(company_name) = LOWER('$companyName')
+    ");
+
+    if ($getCompany->num_rows > 0) {
+        $company_id = $getCompany->fetch_assoc()['company_id'];
+    } else {
+        $conn->query("
+            INSERT INTO companies (company_name) 
+            VALUES ('$companyName')
+        ");
+        $company_id = $conn->insert_id;
+    }
+
+    //insert internships
     $sql = "INSERT INTO internships 
         (student_id, assessor_id, company_id, semester, year)
         VALUES 
         ('$student', '$assessor', '$company_id', '$semester', '$year')";
+
     if ($conn->query($sql)) {
         header("Location: viewInternships.php");
         exit();
@@ -72,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 
 <head>
-    <title>Assign Internship📋</title>
+    <title>Assign Internship</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
@@ -82,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div style="max-width:500px; margin:50px auto; padding:0 20px;">
 
-        <h2 style="font-size:24px; color:#333; margin-bottom:24px; text-align:center;">Assign Internship</h2>
+        <h2 style="font-size:24px; color:#333; margin-bottom:24px; text-align:center;">Assign Internship📋</h2>
 
         <a href="dashboard.php"
             style="display:inline-block; margin-bottom:20px; padding:9px 18px; background:white; border:1px solid #dbdbdb; border-radius:8px; color:#333; font-size:14px; font-weight:bold; text-decoration:none;"

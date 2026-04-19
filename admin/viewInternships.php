@@ -32,7 +32,7 @@ $result = $conn->query($sql);
 <html>
 
 <head>
-    <title>Internship List🏢</title>
+    <title>Internship List</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
@@ -42,7 +42,7 @@ $result = $conn->query($sql);
 
     <div style="max-width:900px; margin:50px auto; padding:0 20px;">
 
-        <h2 style="font-size:24px; color:#333; margin-bottom:24px; text-align:center;">Internship List</h2>
+        <h2 style="font-size:24px; color:#333; margin-bottom:24px; text-align:center;">Internship List🏢</h2>
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
 

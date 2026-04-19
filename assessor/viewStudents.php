@@ -66,7 +66,7 @@ while ($row = $result->fetch_assoc()) {
 <html>
 
 <head>
-    <title>My Students👥</title>
+    <title>My Students</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
@@ -77,7 +77,7 @@ while ($row = $result->fetch_assoc()) {
 <div style="max-width:1000px; margin:50px auto; padding:0 20px;">
 
     <h2 style="font-size:24px; color:#333; margin-bottom:24px; text-align:center;">
-        My Students
+        My Students👥
     </h2>
 
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
