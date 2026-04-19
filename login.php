@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    $stmt = $conn->prepare ("SELECT * FROM users WHERE username = ?");
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $row = $stmt->get_result()->fetch_assoc();
@@ -32,14 +32,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($valid) {
             $_SESSION['user_id'] = $row['user_id'];
-            $_SESSION['role']    = $row['role'];
+            $_SESSION['role'] = $row['role'];
             $_SESSION['username'] = $row['username'];
 
             if ($row['role'] == "admin") {
-                header("Location: admin/dashboard.php");
-            }else {
-                header("Location: assessor/dashboard.php");
-            } 
+                header("Location: admin/home.php");
+            } else {
+                header("Location: assessor/home.php");
+            }
             exit();
         } else {
             $error = "Wrong password";
@@ -49,9 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-<!DOCTYPE html> 
-<html> 
-<head> 
+<!DOCTYPE html>
+<html>
+
+<head>
     <title>Login</title>
 
     <style>
@@ -72,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 18px;
             overflow: hidden;
             background: linear-gradient(135deg, #d9ecff 0%, #f7fbff 50%, #ffffff 100%);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
         }
 
         /* LEFT SIDE */
@@ -85,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .left img {
-            width: 200px;  
+            width: 200px;
             margin-bottom: 25px;
         }
 
@@ -117,9 +118,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background: white;
             padding: 35px;
             border-radius: 14px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
             overflow: visible;
         }
+
         .login-box label {
             font-size: 12px;
             color: #353333;
@@ -192,60 +194,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .contact-link:hover {
             text-decoration: underline;
         }
-
     </style>
 </head>
 
 <body>
 
-<div class="main">
+    <div class="main">
 
-    <!-- LEFT PANEL -->
-    <div class="left">
-        <img src="image/logo.png" alt="Logo">
+        <!-- LEFT PANEL -->
+        <div class="left">
+            <img src="image/logo.png" alt="Logo">
 
-        <h1>Internship Management System</h1>
+            <h1>Internship Management System</h1>
 
-        <p>
-            A centralized platform to manage internship applications, assessor evaluations,
-            and student progress tracking in a clean and efficient workflow.
-        </p>
-    </div>
+            <p>
+                A centralized platform to manage internship applications, assessor evaluations,
+                and student progress tracking in a clean and efficient workflow.
+            </p>
+        </div>
 
-    <!-- RIGHT PANEL -->
-    <div class="right">
-        <div class="login-box">
+        <!-- RIGHT PANEL -->
+        <div class="right">
+            <div class="login-box">
 
-        <h2>Login</h2>
+                <h2>Login</h2>
 
-        <?php if (!empty($error)): ?>
-            <div class="error-msg"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
+                <?php if (!empty($error)): ?>
+                    <div class="error-msg"><?= htmlspecialchars($error) ?></div>
+                <?php endif; ?>
 
-        <form method="POST">
+                <form method="POST">
 
-            <label>Username</label>
-            <input type="text" name="username" placeholder="Enter username" required>
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Enter username" required>
 
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Enter password" required>
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter password" required>
 
-            <!-- bottom row actions -->
-            <div class="login-actions">
-                <a href="https://mail.google.com/mail/?view=cm&to=admin@outlook.com.my"
-                class="contact-link" target="_blank">
-                Contact Admin
-                </a>
+                    <!-- bottom row actions -->
+                    <div class="login-actions">
+                        <a href="https://mail.google.com/mail/?view=cm&to=admin@outlook.com.my" class="contact-link"
+                            target="_blank">
+                            Contact Admin
+                        </a>
 
-                <button type="submit" class="login-btn">Log In</button>
+                        <button type="submit" class="login-btn">Log In</button>
+                    </div>
+
+                </form>
+
             </div>
-
-        </form>
+        </div>
 
     </div>
-    </div>
-
-</div>
 
 </body>
+
 </html>

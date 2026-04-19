@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // check if user is logged in
 if (!isset($_SESSION['role'])) {
-    header("Location: ../index.php");
+    header("Location: ../login.php");
     exit();
 }
 ?>
