@@ -66,7 +66,7 @@ while ($row = $result->fetch_assoc()) {
 <html>
 
 <head>
-    <title>My Students</title>
+    <title>My Students👥</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 

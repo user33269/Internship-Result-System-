@@ -55,7 +55,7 @@ $years = $conn->query("SELECT DISTINCT year FROM internships ORDER BY year DESC"
 <div style="max-width:1000px; margin:50px auto; padding:0 20px;">
 
     <h2 style="font-size:24px; color:#333; margin-bottom:24px; text-align:center;">
-        Internship Results
+        Internship Results📊
     </h2>
 
     <a href="dashboard.php"

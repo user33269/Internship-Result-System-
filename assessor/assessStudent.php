@@ -16,7 +16,6 @@ if (!$student_id) {
 
 $message = "";
 
-// 🔥 GET internship_id (VERY IMPORTANT FIX)
 $getInternship = $conn->query("
     SELECT internship_id 
     FROM internships 

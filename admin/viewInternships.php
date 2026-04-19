@@ -32,7 +32,7 @@ $result = $conn->query($sql);
 <html>
 
 <head>
-    <title>Internship List</title>
+    <title>Internship List🏢</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 

@@ -61,7 +61,7 @@ $years = $conn->query("SELECT DISTINCT year FROM internships WHERE year IS NOT N
 
 <div style="max-width:1000px; margin:50px auto; padding:0 20px;">
 
-    <h2 style="font-size:24px; color:#333; margin-bottom:24px; text-align:center;">My Students Results</h2>
+    <h2 style="font-size:24px; color:#333; margin-bottom:24px; text-align:center;">My Students Results📊</h2>
 
     <a href="dashboard.php"
         style="display:inline-block; margin-bottom:20px; padding:9px 18px; background:white; border:1px solid #dbdbdb; border-radius:8px; color:#333; font-size:14px; font-weight:bold; text-decoration:none;"

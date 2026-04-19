@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 
 <head>
-    <title>Add Student</title>
+    <title>Add Student🎓</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 

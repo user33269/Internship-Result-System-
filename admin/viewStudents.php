@@ -14,7 +14,7 @@ $result = $conn->query($sql);
 <html>
 
 <head>
-    <title>View Students</title>
+    <title>View Students👥</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
