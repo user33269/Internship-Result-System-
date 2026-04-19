@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <h2 style="font-size:24px; color:#333; margin-bottom:24px; text-align:center;">Edit Assessor</h2>
 
-        <a href="viewAssessors.php"
+        <a href="../admin/viewAssessors.php"
             style="display:inline-block; margin-bottom:20px; padding:9px 18px; background:white; border:1px solid #dbdbdb; border-radius:8px; color:#333; font-size:14px; font-weight:bold; text-decoration:none;"
             onmouseover="this.style.borderColor='#0095f6'; this.style.color='#0095f6';"
             onmouseout="this.style.borderColor='#dbdbdb'; this.style.color='#333';">
