@@ -11,27 +11,49 @@ $error = "";
 $success = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST['username']);
-    $password = $_POST['password'];
-    $confirm = $_POST['confirm_password'];
 
-    // Check username not empty
-    if (empty($username) || empty($password)) {
-        $error = "Username and password are required.";
-    } elseif ($password !== $confirm) {
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirm  = $_POST['confirm_password'] ?? '';
+
+    //form input validation 
+    if (empty($username) || empty($password) || empty($confirm)) {
+        $error = "All fields are required.";
+    }
+    elseif (strlen($username) < 3) {
+        $error = "Username must be at least 3 characters.";
+    }
+    elseif ($password !== $confirm) {
         $error = "Passwords do not match.";
-    } else {
-        // Check if username already exists
-        $check = $conn->query("SELECT user_id FROM users WHERE username = '$username'");
-        if ($check->num_rows > 0) {
+    }
+    elseif (strlen($password) < 6) {
+        $error = "Password must be at least 6 characters.";
+    }
+    else {
+
+        //users validation 
+        $stmt = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
             $error = "Username already exists. Please choose another.";
         } else {
+
             $hashed = password_hash($password, PASSWORD_BCRYPT);
-            $sql = "INSERT INTO users (username, password, role) VALUES ('$username', '$hashed', 'assessor')";
-            if ($conn->query($sql) === TRUE) {
+
+
+            $stmt = $conn->prepare("
+                INSERT INTO users (username, password, role)
+                VALUES (?, ?, 'assessor')
+            ");
+            $stmt->bind_param("ss", $username, $hashed);
+
+            if ($stmt->execute()) {
                 $success = "Assessor account created successfully!";
             } else {
-                $error = "Error: " . $conn->error;
+                $error = "Database error: " . $stmt->error;
             }
         }
     }
@@ -115,6 +137,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 
+    <!--client side validation-->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.querySelector("form");
+
+    const username = form.querySelector("input[name='username']");
+    const password = form.querySelector("input[name='password']");
+    const confirm  = form.querySelector("input[name='confirm_password']");
+
+    form.addEventListener("submit", function (e) {
+
+        let errors = [];
+
+        if (username.value.trim() === "") {
+            errors.push("Username is required.");
+        }
+
+        if (username.value.trim().length < 3) {
+            errors.push("Username must be at least 3 characters.");
+        }
+
+        if (password.value === "") {
+            errors.push("Password is required.");
+        }
+
+        if (password.value.length < 6) {
+            errors.push("Password must be at least 6 characters.");
+        }
+
+        if (password.value !== confirm.value) {
+            errors.push("Passwords do not match.");
+        }
+
+        if (errors.length > 0) {
+            e.preventDefault();
+            alert(errors.join("\n"));
+        }
+
+    });
+
+});
+</script>
 </body>
 
 </html>

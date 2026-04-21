@@ -10,29 +10,47 @@ if ($_SESSION['role'] != 'assessor') {
 $student_id = $_GET['id'] ?? '';
 $assessor_id = $_SESSION['user_id'];
 
-if (!$student_id) {
+if (empty($student_id)) {
     die("Invalid student ID");
 }
 
 $message = "";
 
-$getInternship = $conn->query("
+/* ---------------------------
+   CHECK STUDENT EXISTS (SECURE)
+---------------------------- */
+$stmt = $conn->prepare("SELECT student_id FROM students WHERE student_id = ?");
+$stmt->bind_param("s", $student_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows == 0) {
+    die("Student does not exist.");
+}
+
+/* ---------------------------
+   GET INTERNSHIP (SECURE)
+---------------------------- */
+$stmt = $conn->prepare("
     SELECT internship_id 
     FROM internships 
-    WHERE student_id = '$student_id' 
-    AND assessor_id = '$assessor_id'
+    WHERE student_id = ? AND assessor_id = ?
     ORDER BY internship_id DESC
     LIMIT 1
 ");
+$stmt->bind_param("si", $student_id, $assessor_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-if ($getInternship && $getInternship->num_rows > 0) {
-    $internship_id = $getInternship->fetch_assoc()['internship_id'];
+if ($result->num_rows > 0) {
+    $internship_id = $result->fetch_assoc()['internship_id'];
 } else {
     die("No internship found for this student.");
 }
 
-
-// handle form submit
+/* ---------------------------
+   FORM SUBMISSION
+---------------------------- */
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $fields = [
@@ -51,8 +69,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     foreach ($fields as $field) {
 
-        if (!isset($_POST[$field]) || !is_numeric($_POST[$field])) {
-            $message = "Error: All marks must be numeric.";
+        if (!isset($_POST[$field]) || $_POST[$field] === '') {
+            $message = "All fields are required.";
+            $error = true;
+            break;
+        }
+
+        if (!is_numeric($_POST[$field])) {
+            $message = "Marks must be numeric.";
             $error = true;
             break;
         }
@@ -60,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $value = (int) $_POST[$field];
 
         if ($value < 0 || $value > 100) {
-            $message = "Error: Marks must be between 0 and 100.";
+            $message = "Marks must be between 0 and 100.";
             $error = true;
             break;
         }
@@ -78,9 +102,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $la = $marks[5];
         $p  = $marks[6];
         $tm = $marks[7];
+
         $comment = $_POST['comment'] ?? "";
 
-        // calculate final
         $final =
             ($u * 0.10) +
             ($h * 0.10) +
@@ -91,18 +115,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ($p * 0.15) +
             ($tm * 0.15);
 
-        
-        $sql = "INSERT INTO assessments
+        /* ---------------------------
+           INSERT (PREPARED STATEMENT)
+        ---------------------------- */
+        $stmt = $conn->prepare("
+            INSERT INTO assessments
             (student_id, internship_id, undertaking_tasks, health_requirements, theoretical_knowledge,
              report_presentation, language_clarity, learning_activities,
              project_management, time_management, comment, final_mark)
-            VALUES
-            ('$student_id','$internship_id','$u','$h','$t','$r','$l','$la','$p','$tm','$comment','$final')";
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ");
 
-        if ($conn->query($sql)) {
+        $stmt->bind_param(
+            "siiiiiiiiisd",
+            $student_id,
+            $internship_id,
+            $u,
+            $h,
+            $t,
+            $r,
+            $l,
+            $la,
+            $p,
+            $tm,
+            $comment,
+            $final
+        );
+
+        if ($stmt->execute()) {
             $message = "success";
         } else {
-            $message = "Database Error: " . $conn->error;
+            $message = "Database Error: " . $stmt->error;
         }
     }
 }
@@ -266,6 +309,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
                 });
             });
+
+                const form = document.querySelector("form");
+                const inputs_num = document.querySelectorAll("input[type='number']");
+
+                form.addEventListener("submit", function (e) {
+
+                    let valid = true;
+
+                    inputs_num.forEach(input => {
+                        const value = input.value.trim();
+
+                        if (value === "") {
+                            valid = false;
+                            input.style.border = "2px solid red";
+                        } else if (isNaN(value)) {
+                            valid = false;
+                            input.style.border = "2px solid red";
+                        } else {
+                            const num = Number(value);
+
+                            if (num < 0 || num > 100) {
+                                valid = false;
+                                input.style.border = "2px solid red";
+                            } else {
+                                input.style.border = "1px solid #dbdbdb";
+                            }
+                        }
+                    });
+
+                    if (!valid) {
+                        e.preventDefault();
+                        alert("Please ensure all marks are filled correctly (0–100).");
+                    }
+                });
         });
     </script>
 

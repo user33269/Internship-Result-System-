@@ -7,27 +7,47 @@ if ($_SESSION['role'] != 'admin') {
     die("Access denied");
 }
 
+$message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $id = $_POST['student_id'];
-    $name = $_POST['student_name'];
-    $programme = $_POST['programme'];
+    $id = trim($_POST['student_id'] ?? '');
+    $name = trim($_POST['student_name'] ?? '');
+    $programme = trim($_POST['programme'] ?? '');
 
-    // Check if student ID already exists
-    $checkSql = "SELECT * FROM students WHERE student_id = '$id'";
-    $result = $conn->query($checkSql);
+    //form input validation
+    if (empty($id) || empty($name) || empty($programme)) {
+        $message = "All fields are required.";
+    }
+    elseif (strlen($id) < 3) {
+        $message = "Student ID is too short.";
+    }
+    elseif (!preg_match("/^[a-zA-Z0-9]+$/", $id)) {
+        $message = "Student ID must be alphanumeric only.";
+    }
+    else {
 
-    if ($result->num_rows > 0) {
-        echo "<script>alert('Student ID already exists!');</script>";
-    } else {
-        $sql = "INSERT INTO students (student_id, student_name, programme)
-                VALUES ('$id', '$name', '$programme')";
+        //check if student exists
+        $stmt = $conn->prepare("SELECT student_id FROM students WHERE student_id = ?");
+        $stmt->bind_param("s", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        if ($conn->query($sql) === TRUE) {
-            echo "<script>alert('Student added successfully!');</script>";
+        if ($result->num_rows > 0) {
+            $message = "Student ID already exists.";
         } else {
-            echo "Error: " . $conn->error;
+
+            $stmt = $conn->prepare("
+                INSERT INTO students (student_id, student_name, programme)
+                VALUES (?, ?, ?)
+            ");
+            $stmt->bind_param("sss", $id, $name, $programme);
+
+            if ($stmt->execute()) {
+                $message = "success";
+            } else {
+                $message = "Database error: " . $stmt->error;
+            }
         }
     }
 }
@@ -58,6 +78,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <div
             style="background:white; border:1px solid #dbdbdb; border-radius:12px; padding:35px 40px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+
+            <!--alert blocks-->
+            <?php if ($message === "success"): ?>
+                <div style="background:#f0fff4; border:1px solid #b2dfdb; padding:12px; border-radius:8px; margin-bottom:20px; color:#27ae60;">
+                    ✅ Student added successfully!
+                </div>
+            <?php elseif ($message): ?>
+                <div style="background:#fff0f0; border:1px solid #f5c6cb; padding:12px; border-radius:8px; margin-bottom:20px; color:#c0392b;">
+                    ⚠️ <?= htmlspecialchars($message) ?>
+                </div>
+            <?php endif; ?>
 
             <form method="POST">
                 <div style="margin-bottom:18px;">
@@ -98,7 +129,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     </div>
 
+<!--client side validation --> 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
+    const form = document.querySelector("form");
+
+    const id = form.querySelector("input[name='student_id']");
+    const name = form.querySelector("input[name='student_name']");
+    const programme = form.querySelector("input[name='programme']");
+
+    form.addEventListener("submit", function (e) {
+
+        let errors = [];
+
+        if (id.value.trim() === "") {
+            errors.push("Student ID is required.");
+        }
+
+        if (!/^[a-zA-Z0-9]+$/.test(id.value)) {
+            errors.push("Student ID must be alphanumeric only.");
+        }
+
+        if (name.value.trim() === "") {
+            errors.push("Student name is required.");
+        }
+
+        if (programme.value.trim() === "") {
+            errors.push("Programme is required.");
+        }
+
+        if (errors.length > 0) {
+            e.preventDefault();
+            alert(errors.join("\n"));
+        }
+
+    });
+
+});
+</script>
 </body>
 
 </html>

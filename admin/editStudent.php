@@ -2,37 +2,62 @@
 session_start();
 include("../includes/auth.php");
 include("../config/db.php");
-// restrict access
+
 if ($_SESSION['role'] != 'admin') {
     die("Access denied");
 }
 
-// get student ID
-$id = $_GET['id'];
+$message = "";
 
-// fetch student data
-$sql = "SELECT * FROM students WHERE student_id='$id'";
-$result = $conn->query($sql);
+$id = $_GET['id'] ?? '';
+
+$stmt = $conn->prepare("SELECT student_id, student_name, programme FROM students WHERE student_id = ?");
+$stmt->bind_param("s", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+
 $row = $result->fetch_assoc();
+
+if (!$row) {
+    die("Student not found.");
+}
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $id = $_POST['student_id'];
-    $name = $_POST['student_name'];
-    $programme = $_POST['programme'];
+    $student_id = $_POST['student_id'] ?? '';
+    $name = trim($_POST['student_name'] ?? '');
+    $programme = trim($_POST['programme'] ?? '');
 
-    $sql = "UPDATE students
-            SET student_name='$name', programme='$programme'
-            WHERE student_id='$id'";
+    //php validation
+    if (empty($student_id) || empty($name) || empty($programme)) {
+        $message = "All fields are required.";
+    }
+    elseif (strlen($name) < 2) {
+        $message = "Student name is too short.";
+    }
+    elseif (strlen($programme) < 2) {
+        $message = "Programme is too short.";
+    }
+    else {
 
-    if ($conn->query($sql) === TRUE) {
-        header("Location: viewStudents.php");
-    } else {
-        echo "Error updating: " . $conn->error;
+
+        $stmt = $conn->prepare("
+            UPDATE students 
+            SET student_name = ?, programme = ?
+            WHERE student_id = ?
+        ");
+        $stmt->bind_param("sss", $name, $programme, $student_id);
+
+        if ($stmt->execute()) {
+            header("Location: viewStudents.php");
+            exit();
+        } else {
+            $message = "Database error: " . $stmt->error;
+        }
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html>
@@ -65,7 +90,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <span style="font-size:13px; color:#888;">Student ID</span>
                 <div style="font-size:16px; font-weight:bold; color:#0095f6;"><?php echo $row['student_id']; ?></div>
             </div>
-
+            <?php if ($message): ?>
+                <div style="background:#fff0f0; border:1px solid #f5c6cb; padding:12px; border-radius:8px; margin-bottom:20px; color:#c0392b;">
+                    ⚠️ <?= htmlspecialchars($message) ?>
+                </div>
+            <?php endif; ?>
             <form method="POST">
 
     <input type="hidden" name="student_id" value="<?php echo $row['student_id']; ?>">
@@ -99,7 +128,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
 
+        const form = document.querySelector("form");
+
+        const name = form.querySelector("input[name='student_name']");
+        const programme = form.querySelector("input[name='programme']");
+
+        form.addEventListener("submit", function (e) {
+
+            let errors = [];
+
+            if (name.value.trim() === "") {
+                errors.push("Student name is required.");
+            }
+
+            if (name.value.trim().length < 2) {
+                errors.push("Student name is too short.");
+            }
+
+            if (programme.value.trim() === "") {
+                errors.push("Programme is required.");
+            }
+
+            if (programme.value.trim().length < 2) {
+                errors.push("Programme is too short.");
+            }
+
+            if (errors.length > 0) {
+                e.preventDefault();
+                alert(errors.join("\n"));
+            }
+
+        });
+
+    });
+</script>
 
 </body>
 

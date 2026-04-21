@@ -7,71 +7,91 @@ if ($_SESSION['role'] != 'admin') {
     die("Access denied");
 }
 
-// fetch students
-$students = $conn->query("SELECT * FROM students");
+//fetch data
+$students = $conn->query("SELECT student_id, student_name FROM students");
+$assessors = $conn->query("SELECT user_id, username FROM users WHERE role='assessor'");
 
-// fetch assessors
-$assessors = $conn->query("SELECT * FROM users WHERE role='assessor'");
+$message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $student = $_POST['student_id'];
-    $assessor = $_POST['assessor_name'] ?? "";
-    $companyName = trim($_POST['company_name']);
-    $year = $_POST['year'];
-    $semester = $_POST['semester'];
+    $student = trim($_POST['student_id'] ?? '');
+    $assessor_username = trim($_POST['assessor_name'] ?? '');
+    $companyName = trim($_POST['company_name'] ?? '');
+    $year = (int)($_POST['year'] ?? 0);
+    $semester = trim($_POST['semester'] ?? '');
 
-    //validate students
-    $checkStudent = $conn->query("
-        SELECT student_id FROM students 
-        WHERE student_id = '$student'
-    ");
-
-    if ($checkStudent->num_rows == 0) {
-        die("❌ Invalid student selected. Student does not exist.");
+    //php form validation 
+    if (empty($student) || empty($assessor_username) || empty($companyName) || empty($year) || empty($semester)) {
+        $message = "All fields are required.";
     }
-
-    //validate assessor
-    $getAssessor = $conn->query("
-        SELECT user_id FROM users 
-        WHERE username = '$assessor' 
-        AND role = 'assessor'
-    ");
-
-    if ($getAssessor->num_rows > 0) {
-        $assessor = $getAssessor->fetch_assoc()['user_id'];
-    } else {
-        die("❌ Invalid assessor selected");
+    elseif ($year < 2000 || $year > 2100) {
+        $message = "Invalid year selected.";
     }
+    else {
 
-    //handle company
-    $getCompany = $conn->query("
-        SELECT company_id 
-        FROM companies 
-        WHERE LOWER(company_name) = LOWER('$companyName')
-    ");
+        //validate student
+        $stmt = $conn->prepare("SELECT student_id FROM students WHERE student_id = ?");
+        $stmt->bind_param("s", $student);
+        $stmt->execute();
+        $res = $stmt->get_result();
 
-    if ($getCompany->num_rows > 0) {
-        $company_id = $getCompany->fetch_assoc()['company_id'];
-    } else {
-        $conn->query("
-            INSERT INTO companies (company_name) 
-            VALUES ('$companyName')
-        ");
-        $company_id = $conn->insert_id;
-    }
+        if ($res->num_rows == 0) {
+            $message = "Invalid student selected.";
+        } else {
 
-    //insert internships
-    $sql = "INSERT INTO internships 
-        (student_id, assessor_id, company_id, semester, year)
-        VALUES 
-        ('$student', '$assessor', '$company_id', '$semester', '$year')";
+            //validating assessor
+            $stmt = $conn->prepare("
+                SELECT user_id 
+                FROM users 
+                WHERE username = ? AND role = 'assessor'
+            ");
+            $stmt->bind_param("s", $assessor_username);
+            $stmt->execute();
+            $res = $stmt->get_result();
 
-    if ($conn->query($sql)) {
-        header("Location: viewInternships.php");
-        exit();
-    } else {
-        echo "Error: " . $conn->error;
+            if ($res->num_rows == 0) {
+                $message = "Invalid assessor selected.";
+            } else {
+                $assessor_id = $res->fetch_assoc()['user_id'];
+
+
+                $stmt = $conn->prepare("
+                    SELECT company_id 
+                    FROM companies 
+                    WHERE LOWER(company_name) = LOWER(?)
+                ");
+                $stmt->bind_param("s", $companyName);
+                $stmt->execute();
+                $res = $stmt->get_result();
+
+                if ($res->num_rows > 0) {
+                    $company_id = $res->fetch_assoc()['company_id'];
+                } else {
+                    $stmt = $conn->prepare("
+                        INSERT INTO companies (company_name) VALUES (?)
+                    ");
+                    $stmt->bind_param("s", $companyName);
+                    $stmt->execute();
+                    $company_id = $stmt->insert_id;
+                }
+
+
+                $stmt = $conn->prepare("
+                    INSERT INTO internships 
+                    (student_id, assessor_id, company_id, semester, year)
+                    VALUES (?, ?, ?, ?, ?)
+                ");
+                $stmt->bind_param("siisi", $student, $assessor_id, $company_id, $semester, $year);
+
+                if ($stmt->execute()) {
+                    header("Location: viewInternships.php");
+                    exit();
+                } else {
+                    $message = "Database error: " . $stmt->error;
+                }
+            }
+        }
     }
 }
 ?>
@@ -194,6 +214,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         }
                     }
                 });
+            });
+
+            const form = document.querySelector("form");
+
+            const student = form.querySelector("input[name='student_id']");
+            const assessor = form.querySelector("input[name='assessor_name']");
+            const company = form.querySelector("input[name='company_name']");
+            const year = form.querySelector("input[name='year']");
+            const semester = form.querySelector("select[name='semester']");
+
+            form.addEventListener("submit", function (e) {
+
+                let errors = [];
+
+                if (student.value.trim() === "") {
+                    errors.push("Student is required.");
+                }
+
+                if (assessor.value.trim() === "") {
+                    errors.push("Assessor is required.");
+                }
+
+                if (company.value.trim() === "") {
+                    errors.push("Company name is required.");
+                }
+
+                if (year.value === "" || year.value < 2000 || year.value > 2100) {
+                    errors.push("Year must be between 2000 and 2100.");
+                }
+
+                if (semester.value === "") {
+                    errors.push("Please select a semester.");
+                }
+
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    alert(errors.join("\n"));
+                }
+
             });
         });
     </script>

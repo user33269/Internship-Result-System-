@@ -7,48 +7,92 @@ if ($_SESSION['role'] != 'admin') {
     die("Access denied");
 }
 
-$id = intval($_GET['id']);
-$result = $conn->query("SELECT * FROM users WHERE user_id = $id AND role = 'assessor'");
+$id = (int)($_GET['id'] ?? 0);
+
+$message = "";
+
+//fetch assesor
+$stmt = $conn->prepare("
+    SELECT user_id, username 
+    FROM users 
+    WHERE user_id = ? AND role = 'assessor'
+");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+
 $row = $result->fetch_assoc();
 
 if (!$row) {
     die("Assessor not found.");
 }
 
-$error = "";
-$success = "";
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST['username']);
-    $password = $_POST['password'];
-    $confirm = $_POST['confirm_password'];
 
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirm  = $_POST['confirm_password'] ?? '';
+
+    //php validation
     if (empty($username)) {
-        $error = "Username cannot be empty.";
-    } else {
-        // Check username not taken by another user
-        $check = $conn->query("SELECT user_id FROM users WHERE username = '$username' AND user_id != $id");
+        $message = "Username cannot be empty.";
+    }
+    elseif (strlen($username) < 3) {
+        $message = "Username must be at least 3 characters.";
+    }
+    else {
+
+        //check for duplicates
+        $stmt = $conn->prepare("
+            SELECT user_id 
+            FROM users 
+            WHERE username = ? AND user_id != ?
+        ");
+        $stmt->bind_param("si", $username, $id);
+        $stmt->execute();
+        $check = $stmt->get_result();
+
         if ($check->num_rows > 0) {
-            $error = "Username already taken. Please choose another.";
+            $message = "Username already taken.";
         } else {
+
+
             if (!empty($password)) {
+
                 if ($password !== $confirm) {
-                    $error = "Passwords do not match.";
-                } else {
-                    $hashed = password_hash($password, PASSWORD_BCRYPT);
-                    $sql = "UPDATE users SET username = '$username', password = '$hashed' WHERE user_id = $id";
+                    $message = "Passwords do not match.";
                 }
+                elseif (strlen($password) < 6) {
+                    $message = "Password must be at least 6 characters.";
+                }
+                else {
+                    $hashed = password_hash($password, PASSWORD_BCRYPT);
+
+                    $stmt = $conn->prepare("
+                        UPDATE users 
+                        SET username = ?, password = ?
+                        WHERE user_id = ?
+                    ");
+                    $stmt->bind_param("ssi", $username, $hashed, $id);
+                }
+
             } else {
-                // No password change
-                $sql = "UPDATE users SET username = '$username' WHERE user_id = $id";
+
+                $stmt = $conn->prepare("
+                    UPDATE users 
+                    SET username = ?
+                    WHERE user_id = ?
+                ");
+                $stmt->bind_param("si", $username, $id);
             }
 
-            if (empty($error)) {
-                if ($conn->query($sql) === TRUE) {
-                    $success = "Assessor updated successfully!";
+
+            if (empty($message)) {
+                if ($stmt->execute()) {
+                    $message = "success";
                     $row['username'] = $username;
                 } else {
-                    $error = "Error: " . $conn->error;
+                    $message = "Database error: " . $stmt->error;
                 }
             }
         }
@@ -79,19 +123,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ← Back to Assessor List
         </a>
 
-        <?php if ($error): ?>
-            <div
-                style="background:#fff0f0; border:1px solid #f5c6cb; border-radius:8px; padding:12px 16px; margin-bottom:20px; color:#c0392b; font-size:14px;">
-                ⚠️
-                <?= htmlspecialchars($error) ?>
+        <?php if ($message === "success"): ?>
+            <div style="background:#f0fff4; border:1px solid #b2dfdb; padding:12px; border-radius:8px; margin-bottom:20px; color:#27ae60;">
+                ✅ Assessor updated successfully!
             </div>
-        <?php endif; ?>
-
-        <?php if ($success): ?>
-            <div
-                style="background:#f0fff4; border:1px solid #b2dfdb; border-radius:8px; padding:12px 16px; margin-bottom:20px; color:#27ae60; font-size:14px;">
-                ✅
-                <?= htmlspecialchars($success) ?>
+        <?php elseif ($message): ?>
+            <div style="background:#fff0f0; border:1px solid #f5c6cb; padding:12px; border-radius:8px; margin-bottom:20px; color:#c0392b;">
+                ⚠️ <?= htmlspecialchars($message) ?>
             </div>
         <?php endif; ?>
 
@@ -140,7 +178,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </form>
         </div>
     </div>
+    <!--client side validation-->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
 
+    const form = document.querySelector("form");
+
+    const username = form.querySelector("input[name='username']");
+    const password = form.querySelector("input[name='password']");
+    const confirm  = form.querySelector("input[name='confirm_password']");
+
+    form.addEventListener("submit", function (e) {
+
+        let errors = [];
+
+        if (username.value.trim() === "") {
+            errors.push("Username is required.");
+        }
+
+        if (username.value.trim().length < 3) {
+            errors.push("Username must be at least 3 characters.");
+        }
+
+        if (password.value !== "" || confirm.value !== "") {
+
+            if (password.value.length < 6) {
+                errors.push("Password must be at least 6 characters.");
+            }
+
+            if (password.value !== confirm.value) {
+                errors.push("Passwords do not match.");
+            }
+        }
+
+        if (errors.length > 0) {
+            e.preventDefault();
+            alert(errors.join("\n"));
+        }
+
+    });
+
+});
+</script>
 </body>
 
 </html>
