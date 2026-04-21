@@ -13,12 +13,13 @@ $search = $_GET['search'] ?? "";
 $programme = $_GET['programme'] ?? "";
 $year = $_GET['year'] ?? "";
 
-// FIXED SQL (IMPORTANT)
+
 $sql = "SELECT 
             students.student_id, 
             students.student_name,
             students.programme, 
             assessments.final_mark,
+            assessments.assessment_id,
             internships.semester,
             internships.year,
             internships.internship_id
@@ -171,12 +172,12 @@ $years = $conn->query("SELECT DISTINCT year FROM internships WHERE year IS NOT N
                         <td style='padding:13px 18px;'>{$row['year']}</td>
                         <td style='padding:13px 18px; color:{$markColor}; text-align:center;'>{$row['final_mark']}</td>
                         <td style='padding:13px 18px; text-align:center;'>
-                            <a href='viewDetails.php?internship_id={$row['internship_id']}'
-                                style='display:inline-block; padding:6px 14px; background:#0095f6; color:white; border-radius:6px; font-size:13px; font-weight:bold; text-decoration:none;'
-                                onmouseover=\"this.style.backgroundColor='#1877f2'\"
-                                onmouseout=\"this.style.backgroundColor='#0095f6'\">
-                                View
-                            </a>
+                        <a href='viewDetails.php?id={$row['internship_id']}'
+                            style='display:inline-block; padding:6px 14px; background:#0095f6; color:white; border-radius:6px; font-size:13px; font-weight:bold; text-decoration:none;'
+                            onmouseover=\"this.style.backgroundColor='#1877f2'\"
+                            onmouseout=\"this.style.backgroundColor='#0095f6'\">
+                            View
+                        </a>
                         </td>
                     </tr>";
                     $i++;

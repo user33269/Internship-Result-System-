@@ -12,17 +12,24 @@ $id = $_GET['id'];
 
 $sql = "SELECT students.student_name, assessments.*
         FROM assessments
-        JOIN students ON assessments.student_id = students.student_id
-        JOIN internships ON students.student_id = internships.student_id
-        WHERE assessments.student_id = '$id'
+        JOIN students 
+            ON assessments.student_id = students.student_id
+        JOIN internships 
+            ON assessments.internship_id = internships.internship_id
+        WHERE assessments.internship_id = '$id'
         AND internships.assessor_id = '$assessor_id'";
 
 $result = $conn->query($sql);
+if (!$result) {
+    die("SQL Error: " . $conn->error);
+}
 $row = $result->fetch_assoc();
 
-// extra protection
+if ($result->num_rows == 0) {
+    die("No record found. Check JOIN conditions or ID.");
+}
 if (!$row) {
-    die("Access denied");
+    die("Assessment found but missing linked internship OR assessor mismatch.");
 }
 
 $mark = $row['final_mark'];
