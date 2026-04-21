@@ -9,6 +9,8 @@ if ($_SESSION['role'] != 'assessor') {
 
 $student_id = $_GET['id'] ?? '';
 $assessor_id = $_SESSION['user_id'];
+$sql = "INSERT INTO assessments (student_id, internship_id, assessor_id, ...) 
+        VALUES (?, ?, ?, ...)";
 
 if (empty($student_id)) {
     die("Invalid student ID");
@@ -94,13 +96,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!$error) {
 
-        $u  = $marks[0];
-        $h  = $marks[1];
-        $t  = $marks[2];
-        $r  = $marks[3];
-        $l  = $marks[4];
+        $u = $marks[0];
+        $h = $marks[1];
+        $t = $marks[2];
+        $r = $marks[3];
+        $l = $marks[4];
         $la = $marks[5];
-        $p  = $marks[6];
+        $p = $marks[6];
         $tm = $marks[7];
 
         $comment = $_POST['comment'] ?? "";
@@ -310,39 +312,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 });
             });
 
-                const form = document.querySelector("form");
-                const inputs_num = document.querySelectorAll("input[type='number']");
+            const form = document.querySelector("form");
+            const inputs_num = document.querySelectorAll("input[type='number']");
 
-                form.addEventListener("submit", function (e) {
+            form.addEventListener("submit", function (e) {
 
-                    let valid = true;
+                let valid = true;
 
-                    inputs_num.forEach(input => {
-                        const value = input.value.trim();
+                inputs_num.forEach(input => {
+                    const value = input.value.trim();
 
-                        if (value === "") {
-                            valid = false;
-                            input.style.border = "2px solid red";
-                        } else if (isNaN(value)) {
+                    if (value === "") {
+                        valid = false;
+                        input.style.border = "2px solid red";
+                    } else if (isNaN(value)) {
+                        valid = false;
+                        input.style.border = "2px solid red";
+                    } else {
+                        const num = Number(value);
+
+                        if (num < 0 || num > 100) {
                             valid = false;
                             input.style.border = "2px solid red";
                         } else {
-                            const num = Number(value);
-
-                            if (num < 0 || num > 100) {
-                                valid = false;
-                                input.style.border = "2px solid red";
-                            } else {
-                                input.style.border = "1px solid #dbdbdb";
-                            }
+                            input.style.border = "1px solid #dbdbdb";
                         }
-                    });
-
-                    if (!valid) {
-                        e.preventDefault();
-                        alert("Please ensure all marks are filled correctly (0–100).");
                     }
                 });
+
+                if (!valid) {
+                    e.preventDefault();
+                    alert("Please ensure all marks are filled correctly (0–100).");
+                }
+            });
         });
     </script>
 
