@@ -18,17 +18,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $student = trim($_POST['student_id'] ?? '');
     $assessor_username = trim($_POST['assessor_name'] ?? '');
     $companyName = trim($_POST['company_name'] ?? '');
-    $year = (int)($_POST['year'] ?? 0);
+    $year = (int) ($_POST['year'] ?? 0);
     $semester = trim($_POST['semester'] ?? '');
 
     //php form validation 
     if (empty($student) || empty($assessor_username) || empty($companyName) || empty($year) || empty($semester)) {
         $message = "All fields are required.";
-    }
-    elseif ($year < 2000 || $year > 2100) {
+    } elseif ($year < 2000 || $year > 2100) {
         $message = "Invalid year selected.";
-    }
-    else {
+    } else {
 
         //validate student
         $stmt = $conn->prepare("SELECT student_id FROM students WHERE student_id = ?");
@@ -106,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
 
-        <?php include("../includes/navbar.php"); ?>
+    <?php include("../includes/navbar.php"); ?>
 
     <div style="max-width:500px; margin:50px auto; padding:0 20px;">
 
@@ -130,11 +128,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input list="students" name="student_id" placeholder="Select or type student ID"
                         style="width:100%; padding:11px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
                     <datalist id="students">
-                            <?php while ($s = $students->fetch_assoc()) { ?>
+                        <?php while ($s = $students->fetch_assoc()) { ?>
                             <option value="<?php echo $s['student_id']; ?>">
-                                    <?php echo $s['student_name']; ?>
+                                <?php echo $s['student_name']; ?>
                             </option>
-                            <?php } ?>
+                        <?php } ?>
                     </datalist>
                 </div>
 
@@ -145,8 +143,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         style="width:100%; padding:11px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
                     <datalist id="assessors">
                         <?php while ($a = $assessors->fetch_assoc()) { ?>
-                        <option value="<?php echo $a['username']; ?>">
-        <?php } ?>
+                            <option value="<?php echo $a['username']; ?>"></option>
+                        <?php } ?>
                     </datalist>
                 </div>
 
@@ -180,8 +178,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         Year
                     </label>
 
-                    <input type="number" name="year" placeholder="e.g. 2026"
-                        min="2000" max="2100"
+                    <input type="number" name="year" placeholder="e.g. 2026" min="2000" max="2100"
                         style="width:100%; padding:11px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;"
                         required>
                 </div>
