@@ -47,7 +47,7 @@ $pending = $total_students - $total_assessed;
             </p>
 
             <div style="margin-top:12px; font-size:14px; opacity:0.95;">
-                You have assessed <b><?= $total_assessed_students ?></b> students,
+                You have assessed <b><?= $total_assessed ?></b> students,
                 completed <b><?= $total_assessed ?></b> assessments,
                 with <b><?= $pending ?></b> pending reviews.
             </div>
