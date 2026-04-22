@@ -190,11 +190,18 @@ while ($row = $result->fetch_assoc()) {
                         </td>
 
                         <td style='padding:13px 18px;'>
-                            <a href='assessStudent.php?id={$row['student_id']}&internship_id={$row['internship_id']}'
-                                style='padding:6px 14px; background:#0095f6; color:white; border-radius:6px; text-decoration:none;'>
-                                Assess
-                            </a>
-                        </td>
+    " . ($row['is_assessed']
+                                ? "<a href='assessStudent.php?id={$row['student_id']}&internship_id={$row['internship_id']}'
+                style='padding:6px 14px; background:#fd7e14; color:white; border-radius:6px; text-decoration:none;'
+                onclick=\"return confirm('Are you sure you want to reassess this student? The previous marks will be replaced.');\">
+                Reassess
+            </a>"
+                                : "<a href='assessStudent.php?id={$row['student_id']}&internship_id={$row['internship_id']}'
+                style='padding:6px 14px; background:#0095f6; color:white; border-radius:6px; text-decoration:none;'>
+                Assess
+            </a>"
+                            ) . "
+</td>
 
                     </tr>
                     ";
