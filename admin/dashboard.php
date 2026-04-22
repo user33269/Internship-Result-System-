@@ -7,11 +7,6 @@ if ($_SESSION['role'] != 'admin') {
     die("Access denied");
 }
 
-//Dashboard stats
-$total_students = $conn->query("SELECT COUNT(*) AS c FROM students")->fetch_assoc()['c'];
-$total_assessors = $conn->query("SELECT COUNT(*) AS c FROM users WHERE role='assessor'")->fetch_assoc()['c'];
-$total_assessed = $conn->query("SELECT COUNT(DISTINCT student_id) AS c FROM assessments")->fetch_assoc()['c'];
-$pending = $total_students - $total_assessed;
 ?>
 
 <!DOCTYPE html>

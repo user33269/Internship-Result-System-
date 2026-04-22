@@ -12,7 +12,15 @@ $total_students = $conn->query("SELECT COUNT(*) AS c FROM students")->fetch_asso
 $total_assessors = $conn->query("SELECT COUNT(*) AS c FROM users WHERE role='assessor'")->fetch_assoc()['c'];
 $total_assessed = $conn->query("SELECT COUNT(DISTINCT student_id) AS c FROM assessments")->fetch_assoc()['c'];
 $total_internships = $conn->query("SELECT COUNT(*) AS c FROM internships")->fetch_assoc()['c'];
-$pending = $total_internships - $total_assessed;
+$pending = $conn->query("
+    SELECT COUNT(*) AS c
+    FROM internships i
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM assessments a
+        WHERE a.internship_id = i.internship_id
+    )
+")->fetch_assoc()['c'];
 ?>
 
 <!DOCTYPE html>
