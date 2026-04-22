@@ -10,6 +10,7 @@ if ($_SESSION['role'] != 'assessor') {
 $student_id = $_GET['id'] ?? '';
 $assessor_id = $_SESSION['user_id'];
 
+
 if (empty($student_id)) {
     die("Invalid student ID");
 }
@@ -31,14 +32,28 @@ if ($result->num_rows == 0) {
 /* ---------------------------
    GET INTERNSHIP (SECURE)
 ---------------------------- */
-$stmt = $conn->prepare("
+$internship_id_param = isset($_GET['internship_id']) ? (int) $_GET['internship_id'] : 0;
+
+if ($internship_id_param > 0) {
+    // Use the internship_id passed from the URL, but verify it belongs to this assessor
+    $stmt = $conn->prepare("
+        SELECT internship_id 
+        FROM internships 
+        WHERE internship_id = ? AND assessor_id = ?
+    ");
+    $stmt->bind_param("ii", $internship_id_param, $assessor_id);
+} else {
+    // Fallback: get latest internship for this student under this assessor
+    $stmt = $conn->prepare("
     SELECT internship_id 
     FROM internships 
     WHERE student_id = ? AND assessor_id = ?
     ORDER BY internship_id DESC
     LIMIT 1
 ");
-$stmt->bind_param("si", $student_id, $assessor_id);
+    $stmt->bind_param("si", $student_id, $assessor_id);
+}
+
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -46,6 +61,22 @@ if ($result->num_rows > 0) {
     $internship_id = $result->fetch_assoc()['internship_id'];
 } else {
     die("No internship found for this student.");
+}
+
+/* ---------------------------
+   CHECK FOR EXISTING ASSESSMENT
+---------------------------- */
+$existing = null;
+$stmt = $conn->prepare("
+    SELECT * FROM assessments 
+    WHERE internship_id = ? AND assessor_id = ?
+    LIMIT 1
+");
+$stmt->bind_param("ii", $internship_id, $assessor_id);
+$stmt->execute();
+$existing_result = $stmt->get_result();
+if ($existing_result->num_rows > 0) {
+    $existing = $existing_result->fetch_assoc();
 }
 
 /* ---------------------------
@@ -94,13 +125,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!$error) {
 
-        $u  = $marks[0];
-        $h  = $marks[1];
-        $t  = $marks[2];
-        $r  = $marks[3];
-        $l  = $marks[4];
+        $u = $marks[0];
+        $h = $marks[1];
+        $t = $marks[2];
+        $r = $marks[3];
+        $l = $marks[4];
         $la = $marks[5];
-        $p  = $marks[6];
+        $p = $marks[6];
         $tm = $marks[7];
 
         $comment = $_POST['comment'] ?? "";
@@ -116,34 +147,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ($tm * 0.15);
 
         /* ---------------------------
-           INSERT (PREPARED STATEMENT)
+           INSERT/UPDATE (PREPARED STATEMENT)
         ---------------------------- */
-        $stmt = $conn->prepare("
+        if ($existing) {
+            $stmt = $conn->prepare("
+                UPDATE assessments
+                SET undertaking_tasks=?, health_requirements=?, theoretical_knowledge=?,
+                    report_presentation=?, language_clarity=?, learning_activities=?,
+                    project_management=?, time_management=?, comment=?, final_mark=?
+                WHERE internship_id=? AND assessor_id=?
+            ");
+            $stmt->bind_param(
+                "iiiiiiiisdii",
+                $u,
+                $h,
+                $t,
+                $r,
+                $l,
+                $la,
+                $p,
+                $tm,
+                $comment,
+                $final,
+                $internship_id,
+                $assessor_id
+            );
+        } else {
+
+            $stmt = $conn->prepare("
             INSERT INTO assessments
-            (student_id, internship_id, undertaking_tasks, health_requirements, theoretical_knowledge,
+            (student_id, internship_id, assessor_id, undertaking_tasks, health_requirements, theoretical_knowledge,
              report_presentation, language_clarity, learning_activities,
              project_management, time_management, comment, final_mark)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
-        $stmt->bind_param(
-            "siiiiiiiiisd",
-            $student_id,
-            $internship_id,
-            $u,
-            $h,
-            $t,
-            $r,
-            $l,
-            $la,
-            $p,
-            $tm,
-            $comment,
-            $final
-        );
+            $stmt->bind_param(
+                "siiiiiiiiiisd",
+                $student_id,
+                $internship_id,
+                $assessor_id,
+                $u,
+                $h,
+                $t,
+                $r,
+                $l,
+                $la,
+                $p,
+                $tm,
+                $comment,
+                $final
+            );
+        }
 
         if ($stmt->execute()) {
-            $message = "success";
+            $message = $existing ? "updated" : "success";
+            $existing = null; //clear so form resets after submit
         } else {
             $message = "Database Error: " . $stmt->error;
         }
@@ -190,10 +249,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 style="background:#d4edda; color:#155724; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:15px;">
                 ✅ Assessment submitted successfully!
             </div>
+        <?php elseif ($message === "updated"): ?>
+            <div
+                style="background:#d4edda; color:#155724; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:15px;">
+                ✅ Assessment updated successfully! Previous marks have been replaced.
+            </div>
         <?php elseif ($message): ?>
             <div
                 style="background:#f8d7da; color:#721c24; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:15px;">
                 ❌ <?= $message ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($existing): ?>
+            <div
+                style="background:#fff3cd; color:#856404; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:14px;">
+                ⚠️ This student has already been assessed. Submitting will <strong>replace</strong> the existing marks.
             </div>
         <?php endif; ?>
 
@@ -215,6 +286,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             style="display:block; font-size:13px; font-weight:bold; color:#333; margin-bottom:6px;">Undertaking
                             Tasks <span style="color:#0095f6;">(10%)</span></label>
                         <input type="number" name="undertaking_tasks" min="0" max="100" placeholder="0-100"
+                            value="<?= $existing ? $existing['undertaking_tasks'] : '' ?>"
                             style="width:100%; padding:10px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
                     </div>
 
@@ -223,6 +295,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             style="display:block; font-size:13px; font-weight:bold; color:#333; margin-bottom:6px;">Health
                             & Safety <span style="color:#0095f6;">(10%)</span></label>
                         <input type="number" name="health_requirements" min="0" max="100" placeholder="0-100"
+                            value="<?= $existing ? $existing['health_requirements'] : '' ?>"
                             style="width:100%; padding:10px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
                     </div>
 
@@ -231,6 +304,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             style="display:block; font-size:13px; font-weight:bold; color:#333; margin-bottom:6px;">Theoretical
                             Knowledge <span style="color:#0095f6;">(10%)</span></label>
                         <input type="number" name="theoretical_knowledge" min="0" max="100" placeholder="0-100"
+                            value="<?= $existing ? $existing['theoretical_knowledge'] : '' ?>"
                             style="width:100%; padding:10px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
                     </div>
 
@@ -239,6 +313,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             style="display:block; font-size:13px; font-weight:bold; color:#333; margin-bottom:6px;">Report
                             Presentation <span style="color:#0095f6;">(15%)</span></label>
                         <input type="number" name="report_presentation" min="0" max="100" placeholder="0-100"
+                            value="<?= $existing ? $existing['report_presentation'] : '' ?>"
                             style="width:100%; padding:10px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
                     </div>
 
@@ -247,6 +322,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             style="display:block; font-size:13px; font-weight:bold; color:#333; margin-bottom:6px;">Language
                             Clarity <span style="color:#0095f6;">(10%)</span></label>
                         <input type="number" name="language_clarity" min="0" max="100" placeholder="0-100"
+                            value="<?= $existing ? $existing['language_clarity'] : '' ?>"
                             style="width:100%; padding:10px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
                     </div>
 
@@ -255,6 +331,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             style="display:block; font-size:13px; font-weight:bold; color:#333; margin-bottom:6px;">Learning
                             Activities <span style="color:#0095f6;">(15%)</span></label>
                         <input type="number" name="learning_activities" min="0" max="100" placeholder="0-100"
+                            value="<?= $existing ? $existing['learning_activities'] : '' ?>"
                             style="width:100%; padding:10px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
                     </div>
 
@@ -263,6 +340,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             style="display:block; font-size:13px; font-weight:bold; color:#333; margin-bottom:6px;">Project
                             Management <span style="color:#0095f6;">(15%)</span></label>
                         <input type="number" name="project_management" min="0" max="100" placeholder="0-100"
+                            value="<?= $existing ? $existing['project_management'] : '' ?>"
                             style="width:100%; padding:10px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
                     </div>
 
@@ -271,6 +349,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             style="display:block; font-size:13px; font-weight:bold; color:#333; margin-bottom:6px;">Time
                             Management <span style="color:#0095f6;">(15%)</span></label>
                         <input type="number" name="time_management" min="0" max="100" placeholder="0-100"
+                            value="<?= $existing ? $existing['time_management'] : '' ?>"
                             style="width:100%; padding:10px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box;">
                     </div>
 
@@ -280,14 +359,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label
                         style="display:block; font-size:13px; font-weight:bold; color:#333; margin-bottom:6px;">Comment</label>
                     <textarea name="comment" placeholder="Enter your comments here..."
-                        style="width:100%; padding:10px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box; min-height:100px; resize:vertical;"></textarea>
+                        style="width:100%; padding:10px 14px; border:1px solid #dbdbdb; border-radius:8px; font-size:15px; background:#fafafa; box-sizing:border-box; min-height:100px; resize:vertical;"><?= $existing ? htmlspecialchars($existing['comment']) : '' ?></textarea>
                 </div>
 
                 <button type="submit"
                     style="width:100%; padding:13px; background-color:#0095f6; color:white; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer;"
                     onmouseover="this.style.backgroundColor='#1877f2'"
                     onmouseout="this.style.backgroundColor='#0095f6'">
-                    Submit Assessment
+                    <?= $existing ? '🔄 Update Assessment' : 'Submit Assessment' ?>
                 </button>
 
             </form>
@@ -310,39 +389,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 });
             });
 
-                const form = document.querySelector("form");
-                const inputs_num = document.querySelectorAll("input[type='number']");
+            const form = document.querySelector("form");
+            const inputs_num = document.querySelectorAll("input[type='number']");
 
-                form.addEventListener("submit", function (e) {
+            form.addEventListener("submit", function (e) {
 
-                    let valid = true;
+                let valid = true;
 
-                    inputs_num.forEach(input => {
-                        const value = input.value.trim();
+                inputs_num.forEach(input => {
+                    const value = input.value.trim();
 
-                        if (value === "") {
-                            valid = false;
-                            input.style.border = "2px solid red";
-                        } else if (isNaN(value)) {
+                    if (value === "") {
+                        valid = false;
+                        input.style.border = "2px solid red";
+                    } else if (isNaN(value)) {
+                        valid = false;
+                        input.style.border = "2px solid red";
+                    } else {
+                        const num = Number(value);
+
+                        if (num < 0 || num > 100) {
                             valid = false;
                             input.style.border = "2px solid red";
                         } else {
-                            const num = Number(value);
-
-                            if (num < 0 || num > 100) {
-                                valid = false;
-                                input.style.border = "2px solid red";
-                            } else {
-                                input.style.border = "1px solid #dbdbdb";
-                            }
+                            input.style.border = "1px solid #dbdbdb";
                         }
-                    });
-
-                    if (!valid) {
-                        e.preventDefault();
-                        alert("Please ensure all marks are filled correctly (0–100).");
                     }
                 });
+
+                if (!valid) {
+                    e.preventDefault();
+                    alert("Please ensure all marks are filled correctly (0–100).");
+                }
+            });
         });
     </script>
 
