@@ -191,16 +191,35 @@ while ($row = $result->fetch_assoc()) {
 
                         <td style='padding:13px 18px;'>
     " . ($row['is_assessed']
-                                ? "<a href='assessStudent.php?id={$row['student_id']}&internship_id={$row['internship_id']}'
-                style='padding:6px 14px; background:#fd7e14; color:white; border-radius:6px; text-decoration:none;'
-                onclick=\"return confirm('Are you sure you want to reassess this student? The previous marks will be replaced.');\">
-                Reassess
-            </a>"
-                                : "<a href='assessStudent.php?id={$row['student_id']}&internship_id={$row['internship_id']}'
-                style='padding:6px 14px; background:#0095f6; color:white; border-radius:6px; text-decoration:none;'>
-                Assess
-            </a>"
-                            ) . "
+    ? "<a href='assessStudent.php?id={$row['student_id']}&internship_id={$row['internship_id']}'
+        style='display:inline-block;
+               padding:6px 14px;
+               background:#6c757d;
+               color:white;
+               border-radius:6px;
+               text-decoration:none;
+               font-size:13px;
+               font-weight:500;
+               transition:0.2s;'
+        onmouseover=\"this.style.background='#5a6268'\"
+        onmouseout=\"this.style.background='#6c757d'\">
+        Reassess
+    </a>"
+    : "<a href='assessStudent.php?id={$row['student_id']}&internship_id={$row['internship_id']}'
+        style='display:inline-block;
+               padding:6px 14px;
+               background:#0d6efd;
+               color:white;
+               border-radius:6px;
+               text-decoration:none;
+               font-size:13px;
+               font-weight:500;
+               transition:0.2s;'
+        onmouseover=\"this.style.background='#0b5ed7'\"
+        onmouseout=\"this.style.background='#0d6efd'\">
+        Assess
+    </a>"
+) . "
 </td>
 
                     </tr>
