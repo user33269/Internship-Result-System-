@@ -23,14 +23,12 @@ $result = $conn->query($sql);
 if (!$result) {
     die("SQL Error: " . $conn->error);
 }
-$row = $result->fetch_assoc();
+
 
 if ($result->num_rows == 0) {
     die("No record found. Check JOIN conditions or ID.");
 }
-if (!$row) {
-    die("Assessment found but missing linked internship OR assessor mismatch.");
-}
+$row = $result->fetch_assoc();
 
 $mark = $row['final_mark'];
 if ($mark >= 80) {
