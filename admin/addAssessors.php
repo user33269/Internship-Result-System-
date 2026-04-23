@@ -14,22 +14,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
-    $confirm  = $_POST['confirm_password'] ?? '';
+    $confirm = $_POST['confirm_password'] ?? '';
 
     //form input validation 
     if (empty($username) || empty($password) || empty($confirm)) {
         $error = "All fields are required.";
-    }
-    elseif (strlen($username) < 3) {
+    } elseif (strlen($username) < 3) {
         $error = "Username must be at least 3 characters.";
-    }
-    elseif ($password !== $confirm) {
+    } elseif ($password !== $confirm) {
         $error = "Passwords do not match.";
-    }
-    elseif (strlen($password) < 6) {
+    } elseif (strlen($password) < 6) {
         $error = "Password must be at least 6 characters.";
-    }
-    else {
+    } else {
 
         //users validation 
         $stmt = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
@@ -76,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <h2 style="font-size:24px; color:#333; margin-bottom:24px; text-align:center;">Add Assessor</h2>
 
-        <a href="manageAssessors.php"
+        <a href="viewAssessors.php"
             style="display:inline-block; margin-bottom:20px; padding:9px 18px; background:white; border:1px solid #dbdbdb; border-radius:8px; color:#333; font-size:14px; font-weight:bold; text-decoration:none;"
             onmouseover="this.style.borderColor='#0095f6'; this.style.color='#0095f6';"
             onmouseout="this.style.borderColor='#dbdbdb'; this.style.color='#333';">
@@ -139,47 +135,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!--client side validation-->
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {
 
-    const form = document.querySelector("form");
+            const form = document.querySelector("form");
 
-    const username = form.querySelector("input[name='username']");
-    const password = form.querySelector("input[name='password']");
-    const confirm  = form.querySelector("input[name='confirm_password']");
+            const username = form.querySelector("input[name='username']");
+            const password = form.querySelector("input[name='password']");
+            const confirm = form.querySelector("input[name='confirm_password']");
 
-    form.addEventListener("submit", function (e) {
+            form.addEventListener("submit", function (e) {
 
-        let errors = [];
+                let errors = [];
 
-        if (username.value.trim() === "") {
-            errors.push("Username is required.");
-        }
+                if (username.value.trim() === "") {
+                    errors.push("Username is required.");
+                }
 
-        if (username.value.trim().length < 3) {
-            errors.push("Username must be at least 3 characters.");
-        }
+                if (username.value.trim().length < 3) {
+                    errors.push("Username must be at least 3 characters.");
+                }
 
-        if (password.value === "") {
-            errors.push("Password is required.");
-        }
+                if (password.value === "") {
+                    errors.push("Password is required.");
+                }
 
-        if (password.value.length < 6) {
-            errors.push("Password must be at least 6 characters.");
-        }
+                if (password.value.length < 6) {
+                    errors.push("Password must be at least 6 characters.");
+                }
 
-        if (password.value !== confirm.value) {
-            errors.push("Passwords do not match.");
-        }
+                if (password.value !== confirm.value) {
+                    errors.push("Passwords do not match.");
+                }
 
-        if (errors.length > 0) {
-            e.preventDefault();
-            alert(errors.join("\n"));
-        }
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    alert(errors.join("\n"));
+                }
 
-    });
+            });
 
-});
-</script>
+        });
+    </script>
 </body>
 
 </html>
