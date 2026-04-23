@@ -19,6 +19,7 @@ if (isset($_GET['id'])) {
 
     if ($conn->query($sql) === TRUE) {
         header("Location: viewStudents.php");
+        exit();
     } else {
         echo "Error deleting: " . $conn->error;
     }
