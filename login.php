@@ -101,7 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             line-height: 1.3;
             color: #4a647a;
             max-width: 320px;
-            margin-top:10px;
+            margin-top: 10px;
         }
 
         /* RIGHT SIDE */
@@ -244,8 +244,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 </form>
 
+                </form>
+
+                <div
+                    style="margin-top: 18px; padding: 10px 12px; background: #f0f6ff; border: 1px solid #c8dff7; border-radius: 8px; font-size: 12px; color: #2c3e50;">
+                    <strong style="display:block; margin-bottom:6px;">Demo Credentials</strong>
+                    <table style="width:100%; border-collapse:collapse;">
+                        <tr>
+                            <td style="padding:2px 0;"><strong>Admin</strong></td>
+                            <td>admin</td>
+                            <td>123456</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:2px 0;"><strong>Assessor 1</strong></td>
+                            <td>lecturer1</td>
+                            <td>123456</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:2px 0;"><strong>Assessor 2</strong></td>
+                            <td>lecturer2</td>
+                            <td>234567</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:2px 0;"><strong>Assessor 3</strong></td>
+                            <td>lecturer3</td>
+                            <td>333444</td>
+                        </tr>
+                    </table>
+                </div>
+
             </div>
         </div>
+    </div>
+
+    </div>
+    </div>
 
     </div>
 

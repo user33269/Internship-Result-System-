@@ -3,7 +3,7 @@
 $host = "localhost";
 $user = "root";
 $password = "root";
-$database = "internship_system";
+$database = "COMP1044_Database";
 
 $conn = new mysqli($host, $user, $password, $database);
 
